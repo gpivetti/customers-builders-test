@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      TZ: America/Sao_Paulo
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123
+      MONGO_INITDB_DATABASE: builders
+
+  maven:
+    container_name: maven
+    build: './docker/maven'
+    volumes:
+      - ./:/home/app
+    working_dir: /home/app
+
+  app:
+    image: builders-customer-service
+    container_name: builders-customer-service-app
+    build:
+      context: .
+      dockerfile: 'docker/app/Dockerfile'
+    network_mode: 'host'
+    volumes:
+      - .:/home/app
+    working_dir: /home/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"

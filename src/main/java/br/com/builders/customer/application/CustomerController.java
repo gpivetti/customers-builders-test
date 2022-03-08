@@ -25,7 +25,7 @@ public class CustomerController {
         this.logService = logService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<CustomerDto> getAll() {
         try {
             List<CustomerDto> customers = this.findCustomerUseCase.findCustomers();

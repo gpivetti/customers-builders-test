@@ -11,7 +11,7 @@
 	<groupId>br.com.builders</groupId>
 	<artifactId>customer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>customer</name>
+	<name>customer-builders-test</name>
 	<description>Builders Customer Service</description>
 
 	<developers>
@@ -20,14 +20,6 @@
 			<email>gapivetti@gmail.com</email>
 		</developer>
 	</developers>
-
-	<properties>
-		<java.version>11</java.version>
-		<mongodb.version>3.12.10</mongodb.version>
-		<jwt.version>0.9.1</jwt.version>
-		<lombok.version>1.18.22</lombok.version>
-		<apache-commons.version>3.12.0</apache-commons.version>
-	</properties>
 
 	<dependencies>
 		<!-- Spring -->
@@ -77,10 +69,50 @@
 			<artifactId>mongo-java-driver</artifactId>
 			<version>${mongodb.version}</version>
 		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${junit-jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<includes>
+						<include>*/*Tests*</include>
+						<include>*/*Specs*</include>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<source>11</source>
+					<target>11</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -88,4 +120,13 @@
 		</plugins>
 	</build>
 
+	<properties>
+		<java.version>11</java.version>
+		<mongodb.version>3.12.10</mongodb.version>
+		<jwt.version>0.9.1</jwt.version>
+		<lombok.version>1.18.22</lombok.version>
+		<apache-commons.version>3.12.0</apache-commons.version>
+		<junit-jupiter.version>5.8.2</junit-jupiter.version>
+		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+	</properties>
 </project>
