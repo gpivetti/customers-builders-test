@@ -10,9 +10,8 @@ public class Customer {
     private String name;
     private String document;
     private Date birthdate;
-    private int age;
 
-    public void calculateAge() {
-        this.age = 0;
+    public int getAge() {
+        return 0;
     }
 }

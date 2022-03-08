@@ -1,7 +1,9 @@
-package br.com.builders.customer.application;
+package br.com.builders.customer.application.customer;
 
-import br.com.builders.customer.application.dto.CustomerDto;
-import br.com.builders.customer.application.usecases.FindCustomerUseCase;
+import br.com.builders.customer.application.customer.dto.CustomerDto;
+import br.com.builders.customer.application.customer.mappers.CustomerDtoMapper;
+import br.com.builders.customer.application.customer.services.FindCustomerService;
+import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,26 +13,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("v1/customer")
-public class CustomerController {
-    private final FindCustomerUseCase findCustomerUseCase;
+public class GetCustomerController {
+    private final FindCustomerService findCustomerService;
     private final LogService logService;
 
     @Autowired
-    public CustomerController(final FindCustomerUseCase findCustomerUseCase,
-                              final LogService logService) {
-        this.findCustomerUseCase = findCustomerUseCase;
+    public GetCustomerController(final FindCustomerService findCustomerService,
+                                 final LogService logService) {
+        this.findCustomerService = findCustomerService;
         this.logService = logService;
     }
 
     @GetMapping("")
     public List<CustomerDto> getAll() {
         try {
-            List<CustomerDto> customers = this.findCustomerUseCase.findCustomers();
+            List<Customer> customers = this.findCustomerService.findCustomers();
             return this.checkCustomers(customers)
-                    ? customers
+                    ? customers.stream()
+                        .map(CustomerDtoMapper::toCustomerDto)
+                        .collect(Collectors.toList())
                     : new ArrayList<>();
         } catch (Exception ex) {
             this.logService.sendLogError("GetAllCustomersError", ex.getMessage());
@@ -38,7 +43,7 @@ public class CustomerController {
         }
     }
 
-    private boolean checkCustomers(List<CustomerDto> customers) {
+    private boolean checkCustomers(List<Customer> customers) {
         return customers != null && !customers.isEmpty();
     }
 }

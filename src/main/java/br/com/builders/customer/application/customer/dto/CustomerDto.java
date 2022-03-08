@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.dto;
+package br.com.builders.customer.application.customer.dto;
 
 import lombok.Builder;
 import lombok.Data;

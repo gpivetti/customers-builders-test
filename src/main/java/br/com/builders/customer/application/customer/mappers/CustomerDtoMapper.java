@@ -1,6 +1,6 @@
-package br.com.builders.customer.domain.customer.mappers;
+package br.com.builders.customer.application.customer.mappers;
 
-import br.com.builders.customer.application.dto.CustomerDto;
+import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
 public class CustomerDtoMapper {
