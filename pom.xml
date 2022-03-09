@@ -39,14 +39,27 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
+<!--			<version>${spring-boot-starter-test.version}</version>-->
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.junit.vintage</groupId>-->
+<!--					<artifactId>junit-vintage-engine</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
 		</dependency>
+
+		<!-- Main Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- Main Dependencies -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
@@ -73,6 +86,11 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
 			<version>${mongodb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- Tests -->
@@ -159,6 +177,7 @@
 		<lombok.version>1.18.22</lombok.version>
 		<apache-commons.version>3.12.0</apache-commons.version>
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
+<!--		<spring-boot-starter-test.version>2.5.0</spring-boot-starter-test.version>-->
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 	</properties>
 </project>

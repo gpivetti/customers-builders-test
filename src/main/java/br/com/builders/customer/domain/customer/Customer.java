@@ -1,10 +1,12 @@
 package br.com.builders.customer.domain.customer;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
+@Builder
 public class Customer {
     private String id;
     private String name;
