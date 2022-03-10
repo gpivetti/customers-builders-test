@@ -19,13 +19,10 @@ import java.util.stream.Collectors;
 @RequestMapping("v1/customer")
 public class GetCustomerController {
     private final FindCustomerService findCustomerService;
-    private final LogService logService;
 
     @Autowired
-    public GetCustomerController(final FindCustomerService findCustomerService,
-                                 final LogService logService) {
+    public GetCustomerController(final FindCustomerService findCustomerService) {
         this.findCustomerService = findCustomerService;
-        this.logService = logService;
     }
 
     @GetMapping("")
@@ -38,7 +35,6 @@ public class GetCustomerController {
                         .collect(Collectors.toList())
                     : new ArrayList<>();
         } catch (Exception ex) {
-            this.logService.sendLogError("GetAllCustomersError", ex.getMessage());
             throw new AppErrorException(ex);
         }
     }
