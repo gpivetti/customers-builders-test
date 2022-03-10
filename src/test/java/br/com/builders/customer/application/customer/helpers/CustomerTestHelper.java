@@ -29,7 +29,11 @@ public class CustomerTestHelper {
         );
     }
 
-    public static String makeGetUrl(int port) {
-        return "http://localhost:" + port + "v1/customer";
+    public static String makeUrl(int port) {
+        return makeUrl(port, null);
+    }
+
+    public static String makeUrl(int port, String customerId) {
+        return "http://localhost:" + port + "v1/customers" + (customerId != null ? "/" + customerId : "");
     }
 }

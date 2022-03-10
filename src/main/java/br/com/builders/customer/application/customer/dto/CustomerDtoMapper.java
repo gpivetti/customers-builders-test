@@ -1,6 +1,5 @@
 package br.com.builders.customer.application.customer.dto;
 
-import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
 public class CustomerDtoMapper {
@@ -8,6 +7,7 @@ public class CustomerDtoMapper {
         return CustomerDto.builder()
                 .id(customer.getId())
                 .name(customer.getName())
+                .document(customer.getDocument())
                 .birthdate(customer.getBirthdate())
                 .age(customer.getAge())
                 .build();

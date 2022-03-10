@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("v1/customer")
+@RequestMapping("v1/customers")
 public class GetCustomerController {
     private final FindCustomerService findCustomerService;
 
