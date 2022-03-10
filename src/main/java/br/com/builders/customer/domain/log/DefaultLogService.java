@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DomainLogService implements LogService {
+public class DefaultLogService implements LogService {
     private static final Logger LOG = LoggerFactory.getLogger(LogService.class);
 
     @Override

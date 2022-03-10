@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.customer.mappers;
+package br.com.builders.customer.application.customer.dto;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.domain.customer.Customer;

@@ -1,10 +1,16 @@
 version: '3.3'
 
+volumes:
+  mongodb-data-container:
+    driver: local
+
 services:
   db:
     image: mongo:latest
     container_name: mongodb
     restart: always
+#    expose:
+#      - 27017
     ports:
       - "27017:27017"
     environment:
@@ -12,6 +18,8 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123
       MONGO_INITDB_DATABASE: builders
+#    volumes:
+#      - mongodb-data-container:/data/db
 
   maven:
     container_name: maven

@@ -1,11 +1,11 @@
-package br.com.builders.customer.application.customer.mocks;
+package br.com.builders.customer.application.customer.helpers;
 
 import br.com.builders.customer.domain.customer.Customer;
 
 import java.util.Date;
 import java.util.List;
 
-public class CustomerMocks {
+public class CustomerTestHelper {
     public static List<Customer> getCustomers() {
         return List.of(
             Customer.builder()
@@ -27,5 +27,9 @@ public class CustomerMocks {
                     .birthdate(new Date())
                     .build()
         );
+    }
+
+    public static String makeGetUrl(int port) {
+        return "http://localhost:" + port + "v1/customer";
     }
 }

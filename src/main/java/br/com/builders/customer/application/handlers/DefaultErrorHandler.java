@@ -1,6 +1,6 @@
 package br.com.builders.customer.application.handlers;
 
-import br.com.builders.customer.application.data.ApiResponseErrorDTO;
+import br.com.builders.customer.commons.dto.ApiResponseErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,6 +19,7 @@ public class DefaultErrorHandler extends BaseErrorHandler {
     public ResponseEntity<ApiResponseErrorDTO> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
                                                                             final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, errorMessage(ex));
+        handleLogError(responseDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
@@ -27,6 +28,7 @@ public class DefaultErrorHandler extends BaseErrorHandler {
     public ResponseEntity<ApiResponseErrorDTO> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
                                                                             final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, errorMessage(ex));
+        handleLogError(responseDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
 
@@ -35,6 +37,7 @@ public class DefaultErrorHandler extends BaseErrorHandler {
     public ResponseEntity<ApiResponseErrorDTO> handleHttpRequestMethodNotSupported(
             final HttpRequestMethodNotSupportedException ex, final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.METHOD_NOT_ALLOWED, http, errorMessage(ex));
+        handleLogError(responseDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.data;
+package br.com.builders.customer.commons.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -28,8 +28,6 @@ public class ApiResponseErrorDTO {
         private String code;
         private String message;
     }
-
-    private ApiResponseErrorDTO() {}
 
     public static ApiResponseErrorDTO of(HttpStatus status, HttpServletRequest request, String errorMessage) {
         return of(status, request, new HashMap<>(){{ put("Error", errorMessage); }});

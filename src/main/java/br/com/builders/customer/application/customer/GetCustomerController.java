@@ -1,8 +1,8 @@
 package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
-import br.com.builders.customer.application.customer.mappers.CustomerDtoMapper;
-import br.com.builders.customer.application.customer.services.FindCustomerService;
+import br.com.builders.customer.application.customer.dto.CustomerDtoMapper;
+import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.AppErrorException;

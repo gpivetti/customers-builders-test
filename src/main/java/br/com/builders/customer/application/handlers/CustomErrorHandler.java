@@ -1,6 +1,6 @@
 package br.com.builders.customer.application.handlers;
 
-import br.com.builders.customer.application.data.ApiResponseErrorDTO;
+import br.com.builders.customer.commons.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +18,7 @@ public class CustomErrorHandler extends BaseErrorHandler {
                                                                        final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.INTERNAL_SERVER_ERROR, http,
                 errorMessage(ex));
+        handleLogError(responseDTO);
         return new ResponseEntity<>(responseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

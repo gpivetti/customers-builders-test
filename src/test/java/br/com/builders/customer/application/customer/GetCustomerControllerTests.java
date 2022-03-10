@@ -1,8 +1,8 @@
 package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
-import br.com.builders.customer.application.customer.mocks.CustomerMocks;
-import br.com.builders.customer.application.customer.services.FindCustomerService;
+import br.com.builders.customer.application.customer.helpers.CustomerTestHelper;
+import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.log.LogService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 )
 @DisplayName("When Call Get Customer's Routes")
 @SuppressWarnings("unchecked")
-public class GetCustomerControllerTest {
+public class GetCustomerControllerTests {
 
     @LocalServerPort
     private int port;
@@ -49,12 +49,8 @@ public class GetCustomerControllerTest {
     @Test
     @DisplayName("Should Return Customers on Successful")
     public void shouldReturnCustomersWhenServiceReturnsWithSuccess() {
-        when(this.findCustomerService.findCustomers()).thenReturn(CustomerMocks.getCustomers());
-        List<CustomerDto> customers = restTemplate.getForObject(makeUrl(), List.class);
-        assertEquals(customers.size(), CustomerMocks.getCustomers().size());
-    }
-
-    private String makeUrl() {
-        return "http://localhost:" + this.port + "v1/customer";
+        when(this.findCustomerService.findCustomers()).thenReturn(CustomerTestHelper.getCustomers());
+        List<CustomerDto> customers = restTemplate.getForObject(CustomerTestHelper.makeGetUrl(this.port), List.class);
+        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
     }
 }

@@ -1,5 +1,6 @@
 package br.com.builders.customer.application.customer.dto;
 
+import br.com.builders.customer.domain.customer.Customer;
 import lombok.Builder;
 import lombok.Data;
 
