@@ -3,11 +3,14 @@ package br.com.builders.customer.domain.customer.services;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.CustomerRepository;
 import br.com.builders.customer.domain.customer.FindCustomerService;
+import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class FindCustomerDomainService implements FindCustomerService {
@@ -24,6 +27,19 @@ public class FindCustomerDomainService implements FindCustomerService {
         return this.checkCustomers(customers)
                 ? customers
                 : new ArrayList<>();
+    }
+
+    @Override
+    public Customer findCustomerById(String customerId) throws ResourceNotFoundException {
+        Customer customer = this.customerRepository.findById(customerId);
+        if (customer == null) {
+            throw new ResourceNotFoundException("Customer", this.normalizeNotFoundCustomerExceptionFilters(customerId));
+        }
+        return customer;
+    }
+
+    private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {
+        return new HashMap<>(){{ put("customerId", customerId); }};
     }
 
     private boolean checkCustomers(List<Customer> customers) {

@@ -27,18 +27,13 @@ public class MongoCustomerRepository implements CustomerRepository {
     @Override
     public List<Customer> findAll() {
         List<CustomerEntity> customers = this.customerMongoRepository.findAll();
-        return customers.stream()
-                .map(this::mapToModel)
-                .collect(Collectors.toList());
+        return customers.stream().map(this::mapToModel).collect(Collectors.toList());
     }
 
     @Override
     public Customer findById(String customerId) {
         Optional<CustomerEntity> customer = this.customerMongoRepository.findById(customerId);
-        if (customer.isEmpty()) {
-            throw new IllegalArgumentException("Customer " + customerId + " not found");
-        }
-        return this.mapToModel(customer.get());
+        return customer.map(this::mapToModel).orElse(null);
     }
 
     @Override
