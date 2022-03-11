@@ -8,19 +8,19 @@ import java.util.List;
 public class CustomerTestHelper {
     public static List<Customer> getCustomers() {
         return List.of(
-            Customer.builder()
+            new Customer.Builder()
                     .id("1")
                     .name("Customer1")
                     .document("AnyDocument")
                     .birthdate(new Date())
                     .build(),
-            Customer.builder()
+            new Customer.Builder()
                     .id("2")
                     .name("Customer2")
                     .document("AnyDocument")
                     .birthdate(new Date())
                     .build(),
-            Customer.builder()
+            new Customer.Builder()
                     .id("3")
                     .name("Customer3")
                     .document("AnyDocument")

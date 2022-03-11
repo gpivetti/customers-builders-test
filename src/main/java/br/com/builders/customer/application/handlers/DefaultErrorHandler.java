@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class DefaultErrorHandler extends BaseErrorHandler {
@@ -18,26 +20,41 @@ public class DefaultErrorHandler extends BaseErrorHandler {
     @ResponseBody
     public ResponseEntity<ApiResponseErrorDTO> handleMethodArgumentNotValid(final MethodArgumentNotValidException ex,
                                                                             final HttpServletRequest http) {
-        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, errorMessage(ex));
+        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http,
+                ex.getClass().getSimpleName(), this.normalizeArgumentNotValidErrors(ex));
         handleLogError(responseDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        return this.handleErrorResponse(responseDTO);
     }
 
     @ExceptionHandler(value = { HttpMessageNotReadableException.class })
     @ResponseBody
     public ResponseEntity<ApiResponseErrorDTO> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
                                                                             final HttpServletRequest http) {
-        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, errorMessage(ex));
+        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, ex.getMessage());
         handleLogError(responseDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+        return this.handleErrorResponse(responseDTO);
     }
 
     @ExceptionHandler(value = { HttpRequestMethodNotSupportedException.class })
     @ResponseBody
     public ResponseEntity<ApiResponseErrorDTO> handleHttpRequestMethodNotSupported(
             final HttpRequestMethodNotSupportedException ex, final HttpServletRequest http) {
-        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.METHOD_NOT_ALLOWED, http, errorMessage(ex));
+        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.METHOD_NOT_ALLOWED, http, ex.getMessage());
         handleLogError(responseDTO);
-        return new ResponseEntity<>(responseDTO, HttpStatus.METHOD_NOT_ALLOWED);
+        return this.handleErrorResponse(responseDTO);
+    }
+
+    private List<ApiResponseErrorDTO.Errors> normalizeArgumentNotValidErrors(MethodArgumentNotValidException ex) {
+        return this.checkArgumentNotValidErrors(ex)
+                ? ex.getBindingResult().getAllErrors().stream()
+                    .map(error -> new ApiResponseErrorDTO.Errors(error.getCode(), error.getDefaultMessage()))
+                    .collect(Collectors.toList())
+                : null;
+    }
+
+    private boolean checkArgumentNotValidErrors(MethodArgumentNotValidException ex) {
+        ex.getBindingResult();
+        ex.getBindingResult().getAllErrors();
+        return !ex.getBindingResult().getAllErrors().isEmpty();
     }
 }

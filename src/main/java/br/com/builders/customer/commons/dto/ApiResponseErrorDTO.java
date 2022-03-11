@@ -1,64 +1,48 @@
 package br.com.builders.customer.commons.dto;
 
+import br.com.builders.customer.commons.utils.DateUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponseErrorDTO {
-    private String processedAt;
+    private String timestamp;
     private int status;
+    private String error;
     private String message;
     private String method;
     private String path;
     private List<Errors> errors;
 
     @Data
-    @Builder
+    @AllArgsConstructor
     public static class Errors {
         private String code;
         private String message;
     }
 
     public static ApiResponseErrorDTO of(HttpStatus status, HttpServletRequest request, String errorMessage) {
-        return of(status, request, new HashMap<>(){{ put("Error", errorMessage); }});
+        return of(status, request, errorMessage, null);
     }
 
-    public static ApiResponseErrorDTO of(HttpStatus status, HttpServletRequest request, Map<String, String> errors) {
+    public static ApiResponseErrorDTO of(HttpStatus status, HttpServletRequest request, String errorMessage,
+                                         List<Errors> errors) {
         return ApiResponseErrorDTO.builder()
-                .processedAt(normalizeCurrentDate())
+                .timestamp(DateUtils.normalizeCurrentDate())
                 .status(status.value())
-                .message(status.getReasonPhrase())
+                .error(status.getReasonPhrase())
+                .message(errorMessage)
                 .method(request.getMethod())
                 .path(request.getRequestURI())
-                .errors(errors.entrySet().stream()
-                        .map(error ->
-                                ApiResponseErrorDTO.Errors.builder()
-                                        .code(error.getKey())
-                                        .message(error.getValue())
-                                        .build()
-                        ).collect(Collectors.toList()))
+                .errors(errors)
                 .build();
-    }
-
-    private static String normalizeCurrentDate() {
-        try {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ZonedDateTime now = ZonedDateTime.now();
-            return dtf.format(now);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 }

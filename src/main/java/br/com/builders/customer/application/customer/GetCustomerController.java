@@ -1,7 +1,6 @@
 package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
-import br.com.builders.customer.application.customer.dto.CustomerDtoMapper;
 import br.com.builders.customer.commons.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.Customer;
@@ -30,12 +29,12 @@ public class GetCustomerController {
     }
 
     @GetMapping("")
-    public List<CustomerDto> getAll() {
+    public List<CustomerDto> getCustomer() {
         try {
             List<Customer> customers = this.findCustomerService.findCustomers();
             return this.checkCustomers(customers)
                     ? customers.stream()
-                        .map(CustomerDtoMapper::toCustomerDto)
+                        .map(CustomerDto::fromCustomer)
                         .collect(Collectors.toList())
                     : new ArrayList<>();
         } catch (Exception ex) {
@@ -44,11 +43,11 @@ public class GetCustomerController {
     }
 
     @GetMapping("{customerId}")
-    public ResponseEntity<Object> getById(@PathVariable String customerId) {
+    public ResponseEntity<?> getCustomersById(@PathVariable String customerId) {
         try {
             Customer customer = this.findCustomerService.findCustomerById(customerId);
             this.validateCustomer(customer);
-            return ResponseEntity.ok(CustomerDtoMapper.toCustomerDto(customer));
+            return ResponseEntity.ok(CustomerDto.fromCustomer(customer));
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
