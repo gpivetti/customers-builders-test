@@ -38,7 +38,7 @@ public class CustomerMongoRepository implements CustomerRepository {
     }
 
     @Override
-    public Customer findFirstByDocument(String document) {
+    public Customer findByDocument(String document) {
         List<CustomerEntity> customers =
                 this.mongoRepositoryCustomer.findByDocument(document, PageRequest.of(0, 1));
         return customers != null && !customers.isEmpty()

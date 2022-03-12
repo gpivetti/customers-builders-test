@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface MongoRepositoryCustomer extends MongoRepository<CustomerEntity, String> {
-    @Query(sort = "{'created_at': 1}")
+    @Query(sort = "{'createdAt': 1}")
     List<CustomerEntity> findByDocument(String document, PageRequest pageable);
 }

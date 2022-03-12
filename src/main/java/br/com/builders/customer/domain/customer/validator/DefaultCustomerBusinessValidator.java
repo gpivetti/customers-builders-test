@@ -7,20 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DefaultCustomerValidator implements CustomerValidator {
+public class DefaultCustomerBusinessValidator implements CustomerBusinessValidator {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public DefaultCustomerValidator(final CustomerRepository customerRepository){
+    public DefaultCustomerBusinessValidator(final CustomerRepository customerRepository){
         this.customerRepository = customerRepository;
     }
 
     @Override
     public void validate(Customer customer) throws InvalidConstraintException {
-        return;
+        if (customer == null) {
+            throw new InvalidConstraintException("Invalid Customer to Validate");
+        }
+        this.validateDocument(customer);
     }
 
     public void validateDocument(Customer customer) {
-
+        Customer insertedCustomer = this.customerRepository.findByDocument(customer.getDocument());
+        if (insertedCustomer != null && !insertedCustomer.getId().equals(customer.getId())) {
+            throw new InvalidConstraintException("Document already inserted to another customer");
+        }
     }
 }

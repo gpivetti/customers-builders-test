@@ -5,6 +5,6 @@ import java.util.List;
 public interface CustomerRepository {
     List<Customer> findAll();
     Customer findById(String customerId);
-    Customer findFirstByDocument(String document);
+    Customer findByDocument(String document);
     Customer save(Customer customer);
 }
