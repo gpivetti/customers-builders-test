@@ -1,6 +1,4 @@
-package br.com.builders.customer.main.config;
-
-import br.com.builders.customer.infra.mongo.entities.CustomerEntityMapper;
+package br.com.builders.customer.main.mappings;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,15 +12,14 @@ public class ObjectMappingConfig {
 
     public ObjectMappingConfig() {
         this.modelMapper = new ModelMapper();
-        this.getMappings().forEach(mapping -> mapping.addMappings(this.modelMapper));
+        List<ObjectMapping> mappings = ObjectMappingsProvider.getMappings();
+        if (mappings != null && !mappings.isEmpty()) {
+            mappings.forEach(mapping -> mapping.addMappings(this.modelMapper));
+        }
     }
 
     @Bean
     public ModelMapper modelMapper() {
         return this.modelMapper;
-    }
-
-    private List<ObjectMapping> getMappings() {
-        return List.of(new CustomerEntityMapper());
     }
 }

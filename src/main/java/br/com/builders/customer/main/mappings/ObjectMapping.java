@@ -1,4 +1,4 @@
-package br.com.builders.customer.main.config;
+package br.com.builders.customer.main.mappings;
 
 import org.modelmapper.ModelMapper;
 
