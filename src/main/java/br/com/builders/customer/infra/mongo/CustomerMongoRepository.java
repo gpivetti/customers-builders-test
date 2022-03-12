@@ -1,5 +1,8 @@
 package br.com.builders.customer.infra.mongo;
 
+import br.com.builders.customer.commons.dto.FieldFilterData;
+import br.com.builders.customer.commons.dto.PageFiltersData;
+import br.com.builders.customer.commons.enums.SortingEnum;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.CustomerRepository;
 import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
@@ -27,6 +30,42 @@ public class CustomerMongoRepository implements CustomerRepository {
 
     @Override
     public List<Customer> findAll() {
+        List<CustomerEntity> customers = this.mongoRepositoryCustomer.findAll();
+        return customers.stream().map(this::mapToModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Customer> findAll(List<FieldFilterData> filters) {
+        return null;
+    }
+
+    @Override
+    public List<Customer> findAll(PageFiltersData pageFilters) {
+        return null;
+    }
+
+    @Override
+    public List<Customer> findAll(SortingEnum sorting) {
+        return this.findAll(null, null, null);
+    }
+
+    @Override
+    public List<Customer> findAll(List<FieldFilterData> filters, PageFiltersData pageFilters) {
+        return this.findAll(filters, pageFilters, null);
+    }
+
+    @Override
+    public List<Customer> findAll(List<FieldFilterData> filters, SortingEnum sorting) {
+        return this.findAll(filters, null, sorting);
+    }
+
+    @Override
+    public List<Customer> findAll(PageFiltersData pageFilters, SortingEnum sorting) {
+        return this.findAll(null, pageFilters, sorting);
+    }
+
+    @Override
+    public List<Customer> findAll(List<FieldFilterData> filters, PageFiltersData pageFilters, SortingEnum sorting) {
         List<CustomerEntity> customers = this.mongoRepositoryCustomer.findAll();
         return customers.stream().map(this::mapToModel).collect(Collectors.toList());
     }

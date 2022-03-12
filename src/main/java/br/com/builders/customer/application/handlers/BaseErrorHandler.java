@@ -4,7 +4,10 @@ import br.com.builders.customer.commons.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.log.LogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.http.HttpHeaders;
 
 public abstract class BaseErrorHandler {
     @Autowired
@@ -12,9 +15,17 @@ public abstract class BaseErrorHandler {
 
     protected ResponseEntity<ApiResponseErrorDTO> handleErrorResponse(ApiResponseErrorDTO responseErrorDTO) {
         HttpStatus httpStatus = responseErrorDTO != null ? HttpStatus.resolve(responseErrorDTO.getStatus()) : null;
-        return new ResponseEntity<>(responseErrorDTO, httpStatus != null
+        return new ResponseEntity<>(responseErrorDTO,
+                this.getDefaultHeaders(),
+                httpStatus != null
                 ? httpStatus
                 : HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private HttpHeaders getDefaultHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        return httpHeaders;
     }
 
     protected void handleLogError(ApiResponseErrorDTO responseDTO) {

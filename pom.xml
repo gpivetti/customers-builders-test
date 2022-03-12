@@ -87,6 +87,18 @@
 			<version>${junit-jupiter.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Swagger Dependencies -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>${spring-fox-swagger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>${spring-fox-swagger.version}</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -166,5 +178,6 @@
 		<junit-jupiter.version>5.8.2</junit-jupiter.version>
 		<org-modelmapper.version>3.0.0</org-modelmapper.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+		<spring-fox-swagger.version>3.0.0</spring-fox-swagger.version>
 	</properties>
 </project>

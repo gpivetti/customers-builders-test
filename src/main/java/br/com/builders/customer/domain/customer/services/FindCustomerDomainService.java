@@ -1,6 +1,8 @@
 package br.com.builders.customer.domain.customer.services;
 
+import br.com.builders.customer.commons.dto.FieldFilterData;
 import br.com.builders.customer.domain.customer.Customer;
+import br.com.builders.customer.domain.customer.dto.FindCustomersParamsDTO;
 import br.com.builders.customer.domain.customer.repository.CustomerRepository;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
@@ -23,6 +25,11 @@ public class FindCustomerDomainService implements FindCustomerService {
 
     @Override
     public List<Customer> findCustomers() {
+        return findCustomers(null);
+    }
+
+    @Override
+    public List<Customer> findCustomers(FindCustomersParamsDTO findCustomersParamsDTO) {
         List<Customer> customers = this.customerRepository.findAll();
         return this.checkCustomers(customers)
                 ? customers
