@@ -14,4 +14,6 @@ public class CustomerEntity {
     private String name;
     private String document;
     private Date birthdate;
+    private Date createdAt;
+    private Date updatedAt;
 }
