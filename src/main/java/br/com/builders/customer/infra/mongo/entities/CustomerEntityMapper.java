@@ -1,7 +1,7 @@
 package br.com.builders.customer.infra.mongo.entities;
 
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.main.config.ObjectMapping;
+import br.com.builders.customer.main.mappings.ObjectMapping;
 import org.modelmapper.ModelMapper;
 
 public class CustomerEntityMapper implements ObjectMapping {
