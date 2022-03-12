@@ -8,20 +8,21 @@ import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.dto.FindCustomersParamsDTO;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("v1/customers")
+@Tag(name = "orders", description = "Endpoints for orders operations")
 public class GetCustomerController {
     private final FindCustomerService findCustomerService;
 
@@ -31,6 +32,7 @@ public class GetCustomerController {
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Getting Customers")
     public List<CustomerDto> getCustomers(@RequestParam(required = false) String limit,
                                           @RequestParam(required = false) String offset,
                                           @RequestParam(required = false) String filter,
@@ -49,6 +51,7 @@ public class GetCustomerController {
     }
 
     @GetMapping(value = "{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Getting Customer by id")
     public ResponseEntity<?> getCustomerById(@PathVariable String customerId) {
         try {
             Customer customer = this.findCustomerService.findCustomerById(customerId);

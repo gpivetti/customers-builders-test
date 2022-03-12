@@ -10,6 +10,10 @@ swagger:
     name: Gabriel Pivetti
     email: gapivetti@gmail.com
 
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
 spring:
   data:
     mongodb:

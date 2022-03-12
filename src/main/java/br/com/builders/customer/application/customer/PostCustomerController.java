@@ -5,6 +5,8 @@ import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.main.exceptions.AppErrorException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("v1/customers")
+@Tag(name = "orders", description = "Endpoints for orders operations")
 public class PostCustomerController {
     private final SaveCustomerService saveCustomerService;
 
@@ -25,6 +28,7 @@ public class PostCustomerController {
 
     @PostMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Inserting new Customer")
     public ResponseEntity<?> postCustomers(@Valid @RequestBody InsertUpdateCustomerDto customerDto) {
         try {
             Customer customer = this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(customerDto));
