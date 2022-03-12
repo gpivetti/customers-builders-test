@@ -2,7 +2,7 @@ package br.com.builders.customer.domain.customer.services;
 
 import br.com.builders.customer.commons.utils.ValidatorUtils;
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.CustomerRepository;
+import br.com.builders.customer.domain.customer.repository.CustomerRepository;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 import br.com.builders.customer.domain.customer.validator.CustomerBusinessValidator;

@@ -1,7 +1,7 @@
 package br.com.builders.customer.infra.mongo;
 
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.CustomerRepository;
+import br.com.builders.customer.domain.customer.repository.CustomerRepository;
 import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import br.com.builders.customer.infra.mongo.repositories.MongoRepositoryCustomer;
 import org.modelmapper.ModelMapper;
@@ -50,6 +50,11 @@ public class CustomerMongoRepository implements CustomerRepository {
     public Customer save(Customer customer) {
         CustomerEntity customerEntity = this.mongoRepositoryCustomer.save(this.mapToEntity(customer));
         return this.mapToModel(customerEntity);
+    }
+
+    @Override
+    public void delete(String customerId) {
+        this.mongoRepositoryCustomer.deleteById(customerId);
     }
 
     private Customer mapToModel(CustomerEntity customer) {
