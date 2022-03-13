@@ -1,7 +1,7 @@
 package br.com.builders.customer.application.handlers;
 
-import br.com.builders.customer.commons.dto.ApiResponseErrorDTO;
-import br.com.builders.customer.commons.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
+import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.InvalidConstraintException;
 import br.com.builders.customer.main.exceptions.ObjectValidationException;

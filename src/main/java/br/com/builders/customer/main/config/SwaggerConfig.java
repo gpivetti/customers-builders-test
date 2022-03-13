@@ -1,33 +1,24 @@
 package br.com.builders.customer.main.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
 
 @Configuration
 public class SwaggerConfig {
     @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("v1.0.0")
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("br.com.builders.application"))
-                .paths(PathSelectors.any())
-                .build()
-                .useDefaultResponseMessages(false)
-                .apiInfo(apiInfo());
+    public OpenAPI openApi() {
+        return new OpenAPI().info(apiInfo());
     }
 
-    private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Builders Test - Gabriel Pivetti (gapivetti@gmail.com)")
-                .description("Customer Service for evaluation of builders test")
-                .version("v1.0.0")
-                .build();
+    private Info apiInfo() {
+        return new Info()
+                .title("[Builders Test] Customer Service - Gabriel Pivetti")
+                .description("Customer Service Endpoints, developed for Builders Test Evaluation." +
+                        "<br><br><strong>Author</strong>: Gabriel Pivetti" +
+                        "<br><strong>Email</strong>: gapivetti@gmail.com" +
+                        "<br><strong>Mobile</strong>: (18) 991199597")
+                .version("v1.0.0");
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "br.com.builders.customer.infra.mongo.repositories")
 public class MongoConfig {
 
     @Autowired

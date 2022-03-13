@@ -1,6 +1,7 @@
-package br.com.builders.customer.infra.mongo.entities;
+package br.com.builders.customer.infra.mongo.repositories.customer.mappers;
 
 import br.com.builders.customer.domain.customer.Customer;
+import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import br.com.builders.customer.main.mappings.ObjectMapping;
 import org.modelmapper.ModelMapper;
 

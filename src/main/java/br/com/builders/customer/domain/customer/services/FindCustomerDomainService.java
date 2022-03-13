@@ -1,10 +1,12 @@
 package br.com.builders.customer.domain.customer.services;
 
-import br.com.builders.customer.commons.dto.FieldFilterData;
+import br.com.builders.customer.commons.dto.FiltersDataDTO;
+import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.dto.FindCustomersParamsDTO;
-import br.com.builders.customer.domain.customer.repository.CustomerRepository;
+import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
+import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.domain.customer.FindCustomerService;
+import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,24 +18,23 @@ import java.util.Map;
 
 @Service
 public class FindCustomerDomainService implements FindCustomerService {
-    private final CustomerRepository customerRepository;
+    private final FindCustomerRepository customerRepository;
 
     @Autowired
-    public FindCustomerDomainService(final CustomerRepository customerRepository) {
+    public FindCustomerDomainService(final FindCustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     @Override
-    public List<Customer> findCustomers() {
-        return findCustomers(null);
+    public List<Customer> findCustomers(PageFiltersDataDTO pageFilters) {
+        return this.findCustomers(null, pageFilters);
     }
 
     @Override
-    public List<Customer> findCustomers(FindCustomersParamsDTO findCustomersParamsDTO) {
-        List<Customer> customers = this.customerRepository.findAll();
-        return this.checkCustomers(customers)
-                ? customers
-                : new ArrayList<>();
+    public List<Customer> findCustomers(FiltersDataDTO<FiltersCustomerDto> filters, PageFiltersDataDTO pageFilters) {
+        this.validatePageParameters(pageFilters);
+        List<Customer> customers = this.findAllCustomers(filters, pageFilters);
+        return this.checkCustomers(customers) ? customers : new ArrayList<>();
     }
 
     @Override
@@ -45,8 +46,21 @@ public class FindCustomerDomainService implements FindCustomerService {
         return customer;
     }
 
+    private List<Customer> findAllCustomers(FiltersDataDTO<FiltersCustomerDto> filters,
+                                            PageFiltersDataDTO pageFilters) {
+        return (filters == null || filters.getFields() == null || filters.getFields().isEmpty())
+                ? this.customerRepository.findAll(pageFilters)
+                : this.customerRepository.findAll(filters, pageFilters);
+    }
+
     private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {
         return new HashMap<>(){{ put("customerId", customerId); }};
+    }
+
+    private void validatePageParameters(PageFiltersDataDTO pageFilters) {
+        if (pageFilters == null) {
+            throw new AppErrorException("Invalid filter customers without page parameters");
+        }
     }
 
     private boolean checkCustomers(List<Customer> customers) {

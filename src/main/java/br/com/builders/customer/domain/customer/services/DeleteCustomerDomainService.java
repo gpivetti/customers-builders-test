@@ -1,8 +1,9 @@
 package br.com.builders.customer.domain.customer.services;
 
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.repository.CustomerRepository;
+import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
+import br.com.builders.customer.domain.customer.repository.SaveCustomerRepository;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,20 +13,27 @@ import java.util.Map;
 
 @Service
 public class DeleteCustomerDomainService implements DeleteCustomerService {
-    private final CustomerRepository customerRepository;
+    private final FindCustomerRepository findCustomerRepository;
+    private final SaveCustomerRepository saveCustomerRepository;
 
     @Autowired
-    public DeleteCustomerDomainService(final CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public DeleteCustomerDomainService(final FindCustomerRepository findCustomerRepository,
+                                       final SaveCustomerRepository saveCustomerRepository) {
+        this.findCustomerRepository = findCustomerRepository;
+        this.saveCustomerRepository = saveCustomerRepository;
     }
 
     @Override
     public void deleteCustomer(String customerId) throws ResourceNotFoundException {
-        Customer customer = this.customerRepository.findById(customerId);
-        if (customer == null) {
-            throw new ResourceNotFoundException("Customer", this.normalizeNotFoundCustomerExceptionFilters(customerId));
+        this.validateIfCustomerExists(customerId);
+        this.saveCustomerRepository.delete(customerId);
+    }
+
+    private void validateIfCustomerExists(String customerId) throws ResourceNotFoundException {
+        if (this.findCustomerRepository.findById(customerId) == null) {
+            throw new ResourceNotFoundException(Customer.class.getName(),
+                    this.normalizeNotFoundCustomerExceptionFilters(customerId));
         }
-        this.customerRepository.delete(customerId);
     }
 
     private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {

@@ -1,17 +1,17 @@
 package br.com.builders.customer.domain.customer.validator;
 
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.repository.CustomerRepository;
+import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.main.exceptions.InvalidConstraintException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultCustomerBusinessValidator implements CustomerBusinessValidator {
-    private final CustomerRepository customerRepository;
+    private final FindCustomerRepository customerRepository;
 
     @Autowired
-    public DefaultCustomerBusinessValidator(final CustomerRepository customerRepository){
+    public DefaultCustomerBusinessValidator(final FindCustomerRepository customerRepository){
         this.customerRepository = customerRepository;
     }
 

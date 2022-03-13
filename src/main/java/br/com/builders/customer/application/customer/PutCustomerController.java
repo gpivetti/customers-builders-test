@@ -2,9 +2,11 @@ package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.main.exceptions.AppErrorException;
+import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +15,30 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping("v1/customers")
 @Tag(name = "orders", description = "Endpoints for orders operations")
-public class PostCustomerController {
+public class PutCustomerController {
     private final SaveCustomerService saveCustomerService;
 
     @Autowired
-    public PostCustomerController(final SaveCustomerService saveCustomerService) {
+    public PutCustomerController(final SaveCustomerService saveCustomerService) {
         this.saveCustomerService = saveCustomerService;
     }
 
-    @PostMapping(value = "",
+    @PutMapping(value = "{customerId}",
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Inserting new Customer")
-    public ResponseEntity<?> postCustomer(@Valid @RequestBody InsertUpdateCustomerDto customerDto) {
+    @Operation(summary = "Updating Customer by Id")
+    public ResponseEntity<?> putCustomer(@PathVariable String customerId,
+                                         @RequestBody InsertUpdateCustomerDto customerDto) {
         try {
-            Customer customer = this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(customerDto));
+            this.validateRequest(customerDto);
+            Customer customer = this.saveCustomerService.update(customerId,
+                    CustomerMapper.toSaveCustomerDto(customerDto));
             this.validateInsertedCustomer(customer);
             return new ResponseEntity<>(CustomerDto.fromCustomer(customer), HttpStatus.OK);
+        } catch (ResourceNotFoundException ex) {
+            return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
         } catch (AppErrorException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -41,9 +46,15 @@ public class PostCustomerController {
         }
     }
 
+    private void validateRequest(InsertUpdateCustomerDto customerDto) throws AppErrorException {
+        if (customerDto == null) {
+            throw new AppErrorException("Error on Update Customer [Null Request]");
+        }
+    }
+
     private void validateInsertedCustomer(Customer customer) throws AppErrorException {
         if (customer == null) {
-            throw new AppErrorException("Error on Insert Customer [Null Response]");
+            throw new AppErrorException("Error on Update Customer [Null Response]");
         }
     }
 }

@@ -1,6 +1,6 @@
 package br.com.builders.customer.application.customer;
 
-import br.com.builders.customer.commons.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
-//"use the pattern \"field[:op]:value[,field[:op]:value][...]\", for op=[]. (ex: filter=id:123,name:like:John,document:eq:123123)"
 
 @RestController
 @RequestMapping("v1/customers")
@@ -33,6 +30,8 @@ public class DeleteCustomerController {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
+        } catch (AppErrorException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new AppErrorException(ex);
         }

@@ -2,13 +2,18 @@ package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.application.customer.helpers.CustomerTestHelper;
-import br.com.builders.customer.commons.dto.ApiResponseErrorDTO;
-import br.com.builders.customer.commons.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
+import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.application.dto.GenericPaginatedResponseDTO;
+import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -32,6 +38,7 @@ import static org.mockito.Mockito.*;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @DisplayName("[UT] On Processing GetCustomerController")
+@SuppressWarnings("rawtypes")
 public class GetCustomerControllerTests {
 
     @LocalServerPort
@@ -43,59 +50,88 @@ public class GetCustomerControllerTests {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Test
     @DisplayName("On Get Customers: Should return customers list when it has many customers inserted")
     public void shouldReturnCustomersWhenHasManyCustomersInserted() {
-        when(this.findCustomerService.findCustomers()).thenReturn(CustomerTestHelper.getCustomers());
-        ResponseEntity<CustomerDto[]> response =
-                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), CustomerDto[].class);
-        assertNotNull(response.getBody());
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+                .thenReturn(CustomerTestHelper.getCustomers());
+        ResponseEntity<GenericPaginatedResponseDTO> response =
+                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getBody().length, CustomerTestHelper.getCustomers().size());
+        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
         IntStream.range(0, CustomerTestHelper.getCustomers().size())
                 .forEach(index -> {
-                    this.assertCustomerFields(response.getBody()[index], CustomerTestHelper.getCustomers().get(index));
+                    this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index));
                 });
     }
 
     @Test
     @DisplayName("On Get Customers: Should return customers list when it has only one customers inserted")
     public void shouldReturnCustomersWhenHasManyOnlyOneCustomerInserted() {
-        when(this.findCustomerService.findCustomers()).thenReturn(List.of(CustomerTestHelper.getCustomers().get(0)));
-        ResponseEntity<CustomerDto[]> response =
-                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), CustomerDto[].class);
-        assertNotNull(response.getBody());
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+                .thenReturn(List.of(CustomerTestHelper.getCustomers().get(0)));
+        ResponseEntity<GenericPaginatedResponseDTO> response =
+                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getBody().length, 1);
-        this.assertCustomerFields(response.getBody()[0], CustomerTestHelper.getCustomers().get(0));
+        assertEquals(customers.size(), 1);
+        this.assertCustomerFields(customers.get(0), CustomerTestHelper.getCustomers().get(0));
     }
 
     @Test
     @DisplayName("On Get Customers: Should return blank customers list when has no customer to return")
     public void shouldReturnBlankCustomersWhenHasNoCustomersToReturn() {
-        when(this.findCustomerService.findCustomers()).thenReturn(new ArrayList<>());
-        ResponseEntity<CustomerDto[]> response =
-                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), CustomerDto[].class);
-        assertNotNull(response.getBody());
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+                .thenReturn(new ArrayList<>());
+        ResponseEntity<GenericPaginatedResponseDTO> response =
+                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getBody().length, 0);
+        assertEquals(customers.size(), 0);
     }
 
     @Test
     @DisplayName("On Get Customers: Should return blank customers list when service return null")
     public void shouldReturnBlankCustomersWhenServiceReturnNull() {
-        when(this.findCustomerService.findCustomers()).thenReturn(null);
-        ResponseEntity<CustomerDto[]> response =
-                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), CustomerDto[].class);
-        assertNotNull(response.getBody());
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+                .thenReturn(null);
+        ResponseEntity<GenericPaginatedResponseDTO> response =
+                restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(response.getBody().length, 0);
+        assertEquals(customers.size(), 0);
+    }
+
+    @Test
+    @DisplayName("On Get Customers: Should return customers list when request was called with filters")
+    public void shouldReturnCustomersWhenRequestWasCalledWithFilters() {
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+                .thenReturn(CustomerTestHelper.getCustomers());
+        String url = CustomerTestHelper.makeUrl(this.port) + "?page=1&size=10";
+        ResponseEntity<GenericPaginatedResponseDTO> response =
+                restTemplate.getForEntity(url, GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        assertNotNull(customers);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
+        IntStream.range(0, CustomerTestHelper.getCustomers().size())
+                .forEach(index -> {
+                    this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index));
+                });
     }
 
     @Test
     @DisplayName("On Get Customers: Should throw InternalServerError when errors occurs to find customer")
     public void shouldThrowInternalServerErrorWhenErrorsOccursToFindCustomer() {
-        when(this.findCustomerService.findCustomers()).thenThrow(RuntimeException.class);
+        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class))).thenThrow(RuntimeException.class);
         ResponseEntity<ApiResponseErrorDTO> response =
                 restTemplate.getForEntity(CustomerTestHelper.makeUrl(this.port), ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
@@ -139,5 +175,11 @@ public class GetCustomerControllerTests {
         assertEquals(returnedBody.getName(), mockedCustomer.getName());
         assertEquals(returnedBody.getDocument(), mockedCustomer.getDocument());
         assertEquals(returnedBody.getAge(), mockedCustomer.getAge());
+    }
+
+    public <T> List<CustomerDto> mapCustomersResponse(GenericPaginatedResponseDTO responseBody) {
+        if (responseBody == null) return null;
+        Type listType = new TypeToken<List<CustomerDto>>(){}.getType();
+        return this.modelMapper.map(responseBody.getPayload(), listType);
     }
 }
