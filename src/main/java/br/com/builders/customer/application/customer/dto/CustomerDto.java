@@ -26,6 +26,8 @@ public class CustomerDto {
     private LocalDate birthdate;
     @Schema(description = "Customer's age (in years)")
     private int age;
+    @Schema(description = "Customer's age normalized in years, month and days", example = "10y2m5d")
+    private String ageNormalized;
 
     public static CustomerDto fromCustomer(Customer customer) {
         return CustomerDto.builder()
@@ -34,6 +36,7 @@ public class CustomerDto {
                 .document(customer.getDocument())
                 .birthdate(customer.getBirthdate())
                 .age(customer.getAge())
+                .ageNormalized(customer.getAgeNormalized())
                 .build();
     }
 }

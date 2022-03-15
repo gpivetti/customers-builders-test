@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +16,19 @@ public class Customer {
     private LocalDate birthdate;
 
     public int getAge() {
-        return 0;
+        LocalDate currentDate = LocalDate.now();
+        return birthdate.isAfter(currentDate)
+                ? 0
+                : Period.between(this.birthdate, currentDate).getYears();
+    }
+
+    public String getAgeNormalized() {
+        LocalDate currentDate = LocalDate.now();
+        return birthdate.isAfter(currentDate)
+                ? "0y0m0d"
+                : (Period.between(this.birthdate, currentDate).getYears() + "y" +
+                    Period.between(this.birthdate, currentDate).getMonths() + "m" +
+                    Period.between(this.birthdate, currentDate).getDays() + "yd");
     }
 
     private Customer() {}
