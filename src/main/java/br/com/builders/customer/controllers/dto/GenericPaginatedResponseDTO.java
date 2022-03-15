@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.dto;
+package br.com.builders.customer.controllers.dto;
 
 import lombok.Data;
 import org.springframework.data.domain.Pageable;

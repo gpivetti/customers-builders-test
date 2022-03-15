@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.customer.dto;
+package br.com.builders.customer.controllers.customer.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

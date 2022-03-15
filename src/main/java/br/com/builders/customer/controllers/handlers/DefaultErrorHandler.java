@@ -1,6 +1,6 @@
-package br.com.builders.customer.application.handlers;
+package br.com.builders.customer.controllers.handlers;
 
-import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
+import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

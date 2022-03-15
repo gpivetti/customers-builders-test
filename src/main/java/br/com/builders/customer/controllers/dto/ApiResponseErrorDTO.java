@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.dto;
+package br.com.builders.customer.controllers.dto;
 
 import br.com.builders.customer.commons.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;

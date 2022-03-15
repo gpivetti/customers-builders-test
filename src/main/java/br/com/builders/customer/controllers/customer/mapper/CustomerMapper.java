@@ -1,6 +1,6 @@
-package br.com.builders.customer.application.customer.mapper;
+package br.com.builders.customer.controllers.customer.mapper;
 
-import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 
 public class CustomerMapper {

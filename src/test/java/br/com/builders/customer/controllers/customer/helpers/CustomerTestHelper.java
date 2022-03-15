@@ -1,13 +1,12 @@
-package br.com.builders.customer.application.customer.helpers;
+package br.com.builders.customer.controllers.customer.helpers;
 
-import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class CustomerTestHelper {

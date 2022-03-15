@@ -1,7 +1,7 @@
-package br.com.builders.customer.application.handlers;
+package br.com.builders.customer.controllers.handlers;
 
-import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
-import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
+import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.main.exceptions.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;

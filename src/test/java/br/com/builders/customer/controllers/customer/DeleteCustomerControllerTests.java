@@ -1,8 +1,8 @@
-package br.com.builders.customer.application.customer;
+package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.application.customer.helpers.CustomerTestHelper;
-import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
-import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
+import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
+import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
 import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;

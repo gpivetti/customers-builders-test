@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.helper;
+package br.com.builders.customer.controllers.helper;
 
 import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.enums.FilterEnum;

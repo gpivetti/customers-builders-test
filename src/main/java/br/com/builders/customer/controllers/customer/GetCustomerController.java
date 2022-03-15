@@ -1,9 +1,9 @@
-package br.com.builders.customer.application.customer;
+package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.application.customer.dto.CustomerDto;
-import br.com.builders.customer.application.dto.GenericPaginatedResponseDTO;
-import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
-import br.com.builders.customer.application.helper.FiltersHelper;
+import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.dto.GenericPaginatedResponseDTO;
+import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.controllers.helper.FiltersHelper;
 import br.com.builders.customer.commons.dto.FiltersDataDTO;
 import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;

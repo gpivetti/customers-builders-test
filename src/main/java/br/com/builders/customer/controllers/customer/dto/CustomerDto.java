@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.customer.dto;
+package br.com.builders.customer.controllers.customer.dto;
 
 import br.com.builders.customer.domain.customer.Customer;
 import com.fasterxml.jackson.annotation.JsonInclude;
