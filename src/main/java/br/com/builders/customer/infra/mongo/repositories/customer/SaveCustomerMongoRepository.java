@@ -5,6 +5,7 @@ import br.com.builders.customer.domain.customer.repository.SaveCustomerRepositor
 import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import br.com.builders.customer.infra.mongo.helper.MongoUpdateProcessorHelper;
 import br.com.builders.customer.main.exceptions.AppErrorException;
+import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
     private Update buildUpdateFields(CustomerEntity customerEntity) {
         Update update = MongoUpdateProcessorHelper.buildUpdateByObject(customerEntity);
         if (update == null) {
-            throw new AppErrorException("There are no valid and allowed attributes for customer update");
+            throw new InvalidParameterException("There are no valid and allowed attributes for customer update");
         }
         return update;
     }

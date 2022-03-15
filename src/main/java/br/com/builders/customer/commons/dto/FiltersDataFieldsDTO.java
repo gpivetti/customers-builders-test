@@ -1,7 +1,7 @@
 package br.com.builders.customer.commons.dto;
 
 import br.com.builders.customer.commons.enums.FilterEnum;
-import br.com.builders.customer.main.exceptions.InvalidConstraintException;
+import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ public class FiltersDataFieldsDTO {
     private FilterEnum filter;
     private Object value;
 
-    public static List<FiltersDataFieldsDTO> fromStringFilters(List<String> filters) throws InvalidConstraintException {
+    public static List<FiltersDataFieldsDTO> fromStringFilters(List<String> filters) throws InvalidParameterException {
         try {
             if (filters == null || filters.isEmpty()) return new ArrayList<>();
             return filters.stream().map(filter -> {
@@ -29,10 +29,10 @@ public class FiltersDataFieldsDTO {
                         .value(filterPositions.get(filterPositions.size() - 1))
                         .build();
             }).collect(Collectors.toList());
-        } catch (InvalidConstraintException ex) {
+        } catch (InvalidParameterException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new InvalidConstraintException("Error parsing list filter ["+  ex.getMessage() + "]");
+            throw new InvalidParameterException("Error parsing string list filter ["+  ex.getMessage() + "]");
         }
     }
 
@@ -44,7 +44,7 @@ public class FiltersDataFieldsDTO {
 
     private static void validateInvalidFilterPositions(List<String> filterPositions) {
         if (filterPositions.size() <= 1 || filterPositions.size() > 3) {
-            throw new InvalidConstraintException("Invalid pattern of filters parameters");
+            throw new InvalidParameterException("Invalid pattern of filters parameters");
         }
     }
 }

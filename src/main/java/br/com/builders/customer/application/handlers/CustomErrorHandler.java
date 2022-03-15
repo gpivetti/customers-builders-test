@@ -2,10 +2,7 @@ package br.com.builders.customer.application.handlers;
 
 import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
-import br.com.builders.customer.main.exceptions.AppErrorException;
-import br.com.builders.customer.main.exceptions.InvalidConstraintException;
-import br.com.builders.customer.main.exceptions.ObjectValidationException;
-import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import br.com.builders.customer.main.exceptions.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +34,12 @@ public class CustomErrorHandler extends BaseErrorHandler {
         return this.handleErrorResponse(responseDTO);
     }
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ApiResponseNotFoundDTO> handleResourceNotFoundException(final ResourceNotFoundException ex) {
-        ApiResponseNotFoundDTO responseDTO = ApiResponseNotFoundDTO.of(ex.resource(), ex.filters());
+    @ExceptionHandler(InvalidParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponseErrorDTO> handleInvalidParameterException(final InvalidParameterException ex,
+                                                                               final HttpServletRequest http) {
+        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.UNPROCESSABLE_ENTITY, http,
+                ex.getMessage());
         handleLogError(responseDTO);
         return this.handleErrorResponse(responseDTO);
     }
@@ -51,6 +50,14 @@ public class CustomErrorHandler extends BaseErrorHandler {
                                                                                final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http,
                 this.normalizeObjectValidationErrorMessage(ex), this.normalizeObjectValidationErrors(ex));
+        handleLogError(responseDTO);
+        return this.handleErrorResponse(responseDTO);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ApiResponseNotFoundDTO> handleResourceNotFoundException(final ResourceNotFoundException ex) {
+        ApiResponseNotFoundDTO responseDTO = ApiResponseNotFoundDTO.of(ex.resource(), ex.filters());
         handleLogError(responseDTO);
         return this.handleErrorResponse(responseDTO);
     }

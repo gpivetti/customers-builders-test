@@ -4,9 +4,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateUtils {
-    public static String normalizeCurrentDate() {
+    public static String normalizeCurrentTimestamp() {
         try {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             ZonedDateTime now = ZonedDateTime.now();
             return dtf.format(now);
         }

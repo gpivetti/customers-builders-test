@@ -34,7 +34,7 @@ public class ApiResponseNotFoundDTO {
 
     public static ApiResponseNotFoundDTO of(String resource) {
         ApiResponseNotFoundDTO response = new ApiResponseNotFoundDTO();
-        response.timestamp = DateUtils.normalizeCurrentDate();
+        response.timestamp = DateUtils.normalizeCurrentTimestamp();
         response.status = 404;
         response.error = "Not Found";
         if (StringUtils.isNotEmpty(resource)) {
@@ -45,7 +45,7 @@ public class ApiResponseNotFoundDTO {
 
     public static ApiResponseNotFoundDTO of(String resource, Map<String, String> filters) {
         ApiResponseNotFoundDTO response = new ApiResponseNotFoundDTO();
-        response.timestamp = DateUtils.normalizeCurrentDate();
+        response.timestamp = DateUtils.normalizeCurrentTimestamp();
         response.status = 404;
         response.error = "Not Found";
         if (StringUtils.isNotEmpty(resource)) {

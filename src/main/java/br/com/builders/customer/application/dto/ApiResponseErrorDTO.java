@@ -36,7 +36,7 @@ public class ApiResponseErrorDTO {
     public static ApiResponseErrorDTO of(HttpStatus status, HttpServletRequest request, String errorMessage,
                                          List<Errors> errors) {
         return ApiResponseErrorDTO.builder()
-                .timestamp(DateUtils.normalizeCurrentDate())
+                .timestamp(DateUtils.normalizeCurrentTimestamp())
                 .status(status.value())
                 .error(status.getReasonPhrase())
                 .message(errorMessage)

@@ -12,6 +12,7 @@ import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
 import br.com.builders.customer.main.docs.FilterProcessorInfo;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.InvalidConstraintException;
+import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,9 +51,9 @@ public class GetCustomerController {
         try {
             List<Customer> customers = this.findCustomers(FiltersDataFieldsDTO.fromStringFilters(filter), pageable);
             List<CustomerDto> customersDto = this.mappingCustomers(customers);
-            List<String> requestParameters = this.normalizeGetCustomersParameters(filter);
-            return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), requestParameters, pageable);
-        } catch (InvalidConstraintException ex) {
+            List<String> queryParameters = this.normalizeGetCustomersParameters(filter);
+            return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), queryParameters, pageable);
+        } catch (InvalidParameterException | AppErrorException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new AppErrorException(ex);

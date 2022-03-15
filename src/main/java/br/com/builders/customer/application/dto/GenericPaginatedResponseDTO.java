@@ -31,8 +31,7 @@ public class GenericPaginatedResponseDTO<T> {
 
     private GenericPaginatedResponseDTO() {}
 
-    public GenericPaginatedResponseDTO(T responsePayload, String uri, List<String> params,
-                                       Pageable pageParams) {
+    public GenericPaginatedResponseDTO(T responsePayload, String uri, List<String> params, Pageable pageParams) {
         this.currentPage = pageParams.getPageNumber();
         this.currentSize = pageParams.getPageSize();
         this.payload = responsePayload;

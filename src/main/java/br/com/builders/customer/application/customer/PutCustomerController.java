@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
+
 @RestController
 @RequestMapping("v1/customers")
 @Tag(name = "orders", description = "Endpoints for orders operations")
@@ -29,7 +31,7 @@ public class PutCustomerController {
     @PutMapping(value = "{customerId}",
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Updating Customer by Id")
-    public ResponseEntity<?> putCustomer(@PathVariable String customerId,
+    public ResponseEntity<?> putCustomer(@NotNull @PathVariable String customerId,
                                          @RequestBody InsertUpdateCustomerDto customerDto) {
         try {
             this.validateRequest(customerDto);

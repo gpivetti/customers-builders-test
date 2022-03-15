@@ -3,7 +3,7 @@ package br.com.builders.customer.infra.mongo.helper;
 import br.com.builders.customer.commons.dto.FiltersDataFieldsDTO;
 import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
 import br.com.builders.customer.commons.enums.FilterEnum;
-import br.com.builders.customer.main.exceptions.InvalidConstraintException;
+import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -29,7 +29,7 @@ public class MongoQueryProcessorHelper {
         this.query.with(PageRequest.of(pageFilters.getPage(), pageFilters.getSize()));
     }
 
-    public void setQueryByFilters(List<FiltersDataFieldsDTO> filters) throws InvalidConstraintException {
+    public void setQueryByFilters(List<FiltersDataFieldsDTO> filters) throws InvalidParameterException {
         if (filters == null || filters.isEmpty()) return;
         filters.forEach(filter -> {
             if (filter.getValue() != null) {
@@ -40,13 +40,13 @@ public class MongoQueryProcessorHelper {
     }
 
     public void setQueryByFilters(List<FiltersDataFieldsDTO> filters, Map<String, String> mapFields)
-            throws InvalidConstraintException {
+            throws InvalidParameterException {
         if (filters == null || filters.isEmpty()) return;
         if (mapFields == null || mapFields.isEmpty()) return;
         filters.forEach(filter -> {
             String realFieldName = mapFields.get(filter.getField());
             if (StringUtils.isEmpty(realFieldName)) {
-                throw new InvalidConstraintException("Field " + filter.getField() + " not allowed as database filter");
+                throw new InvalidParameterException("Field " + filter.getField() + " not allowed as database filter");
             }
             if (filter.getValue() != null) {
                 this.query.addCriteria(
@@ -63,7 +63,7 @@ public class MongoQueryProcessorHelper {
                 break;
             case LIKE:
                 if (fieldValue instanceof Date) {
-                    throw new InvalidConstraintException("Invalid like operation for Date field " + fieldName);
+                    throw new InvalidParameterException("Invalid like operation for Date field " + fieldName);
                 }
                 newCriteria = Criteria.where(fieldName).regex(".*" + fieldValue + ".*", "i");
                 break;

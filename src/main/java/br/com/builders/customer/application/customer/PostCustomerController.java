@@ -5,6 +5,8 @@ import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.main.exceptions.AppErrorException;
+import br.com.builders.customer.main.exceptions.InvalidConstraintException;
+import br.com.builders.customer.main.exceptions.ObjectValidationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ public class PostCustomerController {
             Customer customer = this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(customerDto));
             this.validateInsertedCustomer(customer);
             return new ResponseEntity<>(CustomerDto.fromCustomer(customer), HttpStatus.OK);
-        } catch (AppErrorException ex) {
+        } catch (InvalidConstraintException | ObjectValidationException | AppErrorException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new AppErrorException(ex);

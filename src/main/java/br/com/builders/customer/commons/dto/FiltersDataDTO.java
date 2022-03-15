@@ -1,6 +1,6 @@
 package br.com.builders.customer.commons.dto;
 
-import br.com.builders.customer.main.exceptions.InvalidConstraintException;
+import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import lombok.Data;
 
 import java.lang.reflect.Field;
@@ -23,32 +23,32 @@ public class FiltersDataDTO<T> {
         this.fields = filterFields;
     }
 
-    public static FiltersDataDTO<Void> of(List<FiltersDataFieldsDTO> filters) {
-        return new FiltersDataDTO<>(null, filters);
+    public static FiltersDataDTO<Void> of(List<FiltersDataFieldsDTO> fields) {
+        return new FiltersDataDTO<>(null, fields);
     }
 
-    public static <S> FiltersDataDTO<S> of(List<FiltersDataFieldsDTO> filters, Class<S> source)
-            throws InvalidConstraintException {
+    public static <S> FiltersDataDTO<S> of(List<FiltersDataFieldsDTO> fields, Class<S> source)
+            throws InvalidParameterException {
         try {
-            List<Field> fields = Arrays.asList(source.getDeclaredFields());
+            List<Field> classFields = Arrays.asList(source.getDeclaredFields());
             return new FiltersDataDTO<>(
                     source,
-                    filters.stream().peek(filter -> {
-                        Field field = fields.stream()
+                    fields.stream().peek(filter -> {
+                        Field field = classFields.stream()
                                 .filter(currentField -> currentField.getName().equals(filter.getField()))
                                 .findFirst()
                                 .orElse(null);
                         if (field == null) {
-                            throw new InvalidConstraintException("Field " + filter.getField() + " " +
+                            throw new InvalidParameterException("Field " + filter.getField() + " " +
                                     "not allowed for filter");
                         }
                         filter.setField(field.getName());
                         filter.setValue(mapFieldValue(field, (String) filter.getValue()));
                     }).collect(Collectors.toList()));
-        } catch (InvalidConstraintException ex) {
+        } catch (InvalidParameterException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new InvalidConstraintException("Error processing filter ["+  ex.getMessage() + "]");
+            throw new InvalidParameterException("Error processing filter ["+  ex.getMessage() + "]");
         }
     }
 
@@ -74,7 +74,7 @@ public class FiltersDataDTO<T> {
             }
             return value;
         } catch (Exception e) {
-            throw new InvalidConstraintException("Invalid pattern for field " + field);
+            throw new InvalidParameterException("Invalid pattern for field " + field);
         }
     }
 

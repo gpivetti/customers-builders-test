@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,15 @@ public class DefaultErrorHandler extends BaseErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResponseErrorDTO> handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
                                                                             final HttpServletRequest http) {
+        ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, ex.getMessage());
+        handleLogError(responseDTO);
+        return this.handleErrorResponse(responseDTO);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResponseErrorDTO> handleHttpMediaTypeNotSupportedException(
+            final HttpMediaTypeNotSupportedException ex, final HttpServletRequest http) {
         ApiResponseErrorDTO responseDTO = ApiResponseErrorDTO.of(HttpStatus.BAD_REQUEST, http, ex.getMessage());
         handleLogError(responseDTO);
         return this.handleErrorResponse(responseDTO);
