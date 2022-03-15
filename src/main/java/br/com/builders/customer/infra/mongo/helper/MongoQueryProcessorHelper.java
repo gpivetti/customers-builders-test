@@ -1,7 +1,7 @@
 package br.com.builders.customer.infra.mongo.helper;
 
-import br.com.builders.customer.commons.dto.FiltersDataFieldsDTO;
-import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
+import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.commons.enums.FilterEnum;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import org.apache.commons.lang3.StringUtils;
@@ -24,12 +24,12 @@ public class MongoQueryProcessorHelper {
         return this.query;
     }
 
-    public void  setQueryByPages(PageFiltersDataDTO pageFilters) {
+    public void  setQueryByPages(PageDataDTO pageFilters) {
         if (pageFilters == null) return;
         this.query.with(PageRequest.of(pageFilters.getPage(), pageFilters.getSize()));
     }
 
-    public void setQueryByFilters(List<FiltersDataFieldsDTO> filters) throws InvalidParameterException {
+    public void setQueryByFilters(List<FieldsDataDTO> filters) throws InvalidParameterException {
         if (filters == null || filters.isEmpty()) return;
         filters.forEach(filter -> {
             if (filter.getValue() != null) {
@@ -39,7 +39,7 @@ public class MongoQueryProcessorHelper {
         });
     }
 
-    public void setQueryByFilters(List<FiltersDataFieldsDTO> filters, Map<String, String> mapFields)
+    public void setQueryByFilters(List<FieldsDataDTO> filters, Map<String, String> mapFields)
             throws InvalidParameterException {
         if (filters == null || filters.isEmpty()) return;
         if (mapFields == null || mapFields.isEmpty()) return;

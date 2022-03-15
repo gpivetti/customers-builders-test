@@ -22,13 +22,15 @@ public class ValidatorUtils  {
         }
         try {
             Set<ConstraintViolation<T>> violations = buildValidator().validate(object);
-            Map<String, String> mapViolations = getMapViolations(violations);
-            if (!mapViolations.isEmpty()) {
+            Map<String, String> violationsMap = getViolationsMap(violations);
+            if (!violationsMap.isEmpty()) {
                 if (entity != null && !entity.trim().equals(""))
-                    throw new ObjectValidationException(entity, mapViolations);
+                    throw new ObjectValidationException(entity, violationsMap);
                 else
-                    throw new ObjectValidationException(mapViolations);
+                    throw new ObjectValidationException(violationsMap);
             }
+        } catch (ObjectValidationException ex) {
+            throw ex;
         } catch (Exception ex) {
             throw new AppErrorException(ex);
         }
@@ -39,7 +41,7 @@ public class ValidatorUtils  {
         return factory.getValidator();
     }
 
-    private static <T> Map<String, String> getMapViolations(Set<ConstraintViolation<T>> violations) {
+    private static <T> Map<String, String> getViolationsMap(Set<ConstraintViolation<T>> violations) {
         Map<String, String> validatorsMap = new HashMap<>();
         if (checkViolations(violations)) {
             for (ConstraintViolation<T> violation : violations) {

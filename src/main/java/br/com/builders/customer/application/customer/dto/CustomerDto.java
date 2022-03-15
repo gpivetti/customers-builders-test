@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -23,7 +23,7 @@ public class CustomerDto {
     @Schema(description = "Customer's document")
     private String document;
     @Schema(description = "Customer's birthdate (pattern: YYYY-MM-DD)", example = "1988-11-06")
-    private Date birthdate;
+    private LocalDate birthdate;
     @Schema(description = "Customer's age (in years)")
     private int age;
 

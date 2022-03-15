@@ -4,6 +4,7 @@ import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
 import br.com.builders.customer.domain.customer.repository.SaveCustomerRepository;
+import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,15 @@ public class DeleteCustomerDomainService implements DeleteCustomerService {
 
     @Override
     public void deleteCustomer(String customerId) throws ResourceNotFoundException {
+        this.validateCustomerId(customerId);
         this.validateIfCustomerExists(customerId);
         this.saveCustomerRepository.delete(customerId);
+    }
+
+    private void validateCustomerId(String customerId) {
+        if (customerId == null || customerId.trim().equals("")) {
+            throw new AppErrorException("customerId is null to delete");
+        }
     }
 
     private void validateIfCustomerExists(String customerId) throws ResourceNotFoundException {

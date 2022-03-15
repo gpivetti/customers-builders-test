@@ -7,7 +7,8 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Date;
+import java.time.LocalDate;
+
 @Data
 @Builder
 public class InsertUpdateCustomerDto {
@@ -22,5 +23,5 @@ public class InsertUpdateCustomerDto {
 
     @NotNull(message = "birthdate not be empty")
     @Schema(description = "Customer's birthdate (pattern: YYYY-MM-DD)", example = "1988-11-06", required = true)
-    private Date birthdate;
+    private LocalDate birthdate;
 }

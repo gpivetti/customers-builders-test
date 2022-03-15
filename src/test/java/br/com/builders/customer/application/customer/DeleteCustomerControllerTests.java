@@ -5,6 +5,7 @@ import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -43,6 +44,11 @@ public class DeleteCustomerControllerTests {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @BeforeEach
+    public void beforeEach(){
+        reset(this.deleteCustomerService);
+    }
 
     @Test
     @DisplayName("On Delete Customer: Should return success on customer remove when parameters are correct")

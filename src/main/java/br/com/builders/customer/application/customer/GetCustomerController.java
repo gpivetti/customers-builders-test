@@ -3,15 +3,15 @@ package br.com.builders.customer.application.customer;
 import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.application.dto.GenericPaginatedResponseDTO;
 import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
+import br.com.builders.customer.application.helper.FiltersHelper;
 import br.com.builders.customer.commons.dto.FiltersDataDTO;
-import br.com.builders.customer.commons.dto.FiltersDataFieldsDTO;
-import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
+import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
 import br.com.builders.customer.main.docs.FilterProcessorInfo;
 import br.com.builders.customer.main.exceptions.AppErrorException;
-import br.com.builders.customer.main.exceptions.InvalidConstraintException;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,15 +43,14 @@ public class GetCustomerController {
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Getting Customers")
-    public GenericPaginatedResponseDTO<List<CustomerDto>> getCustomers(
-            @ParameterObject Pageable pageable,
+    public GenericPaginatedResponseDTO<List<CustomerDto>> getCustomers(@ParameterObject Pageable pageable,
             @Parameter(description = FilterProcessorInfo.DESCRIPTION, example = FilterProcessorInfo.EXAMPLE)
                 @RequestParam(required = false) List<String> filter,
             HttpServletRequest http) {
         try {
-            List<Customer> customers = this.findCustomers(FiltersDataFieldsDTO.fromStringFilters(filter), pageable);
+            List<Customer> customers = this.findCustomers(FiltersHelper.buildFieldsFromFilters(filter), pageable);
             List<CustomerDto> customersDto = this.mappingCustomers(customers);
-            List<String> queryParameters = this.normalizeGetCustomersParameters(filter);
+            List<String> queryParameters = FiltersHelper.buildQueryParametersFromListFilter(filter);
             return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), queryParameters, pageable);
         } catch (InvalidParameterException | AppErrorException ex) {
             throw ex;
@@ -76,12 +75,12 @@ public class GetCustomerController {
         }
     }
 
-    private List<Customer> findCustomers(List<FiltersDataFieldsDTO> filterFields, Pageable pageable) {
-        PageFiltersDataDTO pageFilters = new PageFiltersDataDTO(pageable.getPageNumber(), pageable.getPageSize());
+    private List<Customer> findCustomers(List<FieldsDataDTO> filterFields, Pageable pageable) {
+        PageDataDTO pageFilters = new PageDataDTO(pageable.getPageNumber(), pageable.getPageSize());
         return filterFields.isEmpty()
                 ? this.findCustomerService.findCustomers(pageFilters)
-                : this.findCustomerService.findCustomers(FiltersDataDTO.of(filterFields, FiltersCustomerDto.class),
-                pageFilters);
+                : this.findCustomerService.findCustomers(
+                        FiltersDataDTO.fromClassFields(filterFields, FiltersCustomerDto.class), pageFilters);
     }
 
     private List<CustomerDto> mappingCustomers(List<Customer> customers) {
@@ -90,14 +89,6 @@ public class GetCustomerController {
                 .map(CustomerDto::fromCustomer)
                 .collect(Collectors.toList())
                 : new ArrayList<>();
-    }
-
-    private List<String> normalizeGetCustomersParameters(List<String> filters) {
-        return filters != null && !filters.isEmpty()
-                ? filters.stream()
-                    .map(filter -> "filter="+filter)
-                    .collect(Collectors.toList())
-                : null;
     }
 
     private boolean checkCustomers(List<Customer> customers) {

@@ -3,13 +3,13 @@ package br.com.builders.customer.commons.dto;
 import lombok.Data;
 
 @Data
-public class PageFiltersDataDTO {
+public class PageDataDTO {
     public int page;
     public int size;
 
-    private PageFiltersDataDTO() {}
+    private PageDataDTO() {}
 
-    public PageFiltersDataDTO(int page, int size) {
+    public PageDataDTO(int page, int size) {
         this.page = page;
         this.size = size;
     }

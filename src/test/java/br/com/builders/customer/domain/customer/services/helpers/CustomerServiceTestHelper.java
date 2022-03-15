@@ -1,16 +1,14 @@
-package br.com.builders.customer.application.customer.helpers;
+package br.com.builders.customer.domain.customer.services.helpers;
 
-import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-public class CustomerTestHelper {
+public class CustomerServiceTestHelper {
     public static List<Customer> getCustomers() {
         return List.of(
             new Customer.Builder()
@@ -34,25 +32,19 @@ public class CustomerTestHelper {
         );
     }
 
-    public static InsertUpdateCustomerDto getCustomerToSave(Customer customer) {
-        return InsertUpdateCustomerDto.builder()
+    public static SaveCustomerDto mapCustomerToSave(Customer customer) {
+        return SaveCustomerDto.builder()
                 .name(customer.getName())
                 .document(customer.getDocument())
                 .birthdate(customer.getBirthdate())
                 .build();
     }
 
-    public static HttpHeaders getDefaultHeaders() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        return httpHeaders;
-    }
-
-    public static String makeUrl(int port) {
-        return makeUrl(port, null);
-    }
-
-    public static String makeUrl(int port, String customerId) {
-        return "http://localhost:" + port + "v1/customers" + (customerId != null ? "/" + customerId : "");
+    public static Customer mapSaveToCustomer(SaveCustomerDto saveCustomer) {
+        return new Customer.Builder()
+                .name(saveCustomer.getName())
+                .document(saveCustomer.getDocument())
+                .birthdate(saveCustomer.getBirthdate())
+                .build();
     }
 }

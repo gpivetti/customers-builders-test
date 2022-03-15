@@ -5,10 +5,12 @@ import br.com.builders.customer.application.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.application.dto.GenericPaginatedResponseDTO;
-import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
+import br.com.builders.customer.commons.dto.FiltersDataDTO;
+import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -40,7 +42,7 @@ import static org.mockito.Mockito.*;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @DisplayName("[UT] On Processing GetCustomerController")
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class GetCustomerControllerTests {
 
     @LocalServerPort
@@ -55,13 +57,20 @@ public class GetCustomerControllerTests {
     @Autowired
     private ModelMapper modelMapper;
 
+    @BeforeEach
+    public void beforeEach(){
+        reset(this.findCustomerService);
+    }
+
     @Test
     @DisplayName("On Get Customers: Should return customers list when it has many customers inserted")
     public void shouldReturnCustomersWhenHasManyCustomersInserted() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class)))
                 .thenReturn(CustomerTestHelper.getCustomers());
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
         List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
@@ -73,10 +82,12 @@ public class GetCustomerControllerTests {
     @Test
     @DisplayName("On Get Customers: Should return customers list when it has only one customers inserted")
     public void shouldReturnCustomersWhenHasManyOnlyOneCustomerInserted() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class)))
                 .thenReturn(List.of(CustomerTestHelper.getCustomers().get(0)));
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
         List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(customers.size(), 1);
@@ -86,10 +97,12 @@ public class GetCustomerControllerTests {
     @Test
     @DisplayName("On Get Customers: Should return blank customers list when has no customer to return")
     public void shouldReturnBlankCustomersWhenHasNoCustomersToReturn() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class)))
                 .thenReturn(new ArrayList<>());
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
         List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(customers.size(), 0);
@@ -98,23 +111,27 @@ public class GetCustomerControllerTests {
     @Test
     @DisplayName("On Get Customers: Should return blank customers list when service return null")
     public void shouldReturnBlankCustomersWhenServiceReturnNull() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class)))
                 .thenReturn(null);
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
         List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(customers.size(), 0);
     }
 
     @Test
-    @DisplayName("On Get Customers: Should return customers list when request was called with filters")
-    public void shouldReturnCustomersWhenRequestWasCalledWithFilters() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class)))
+    @DisplayName("On Get Customers: Should return customers list when request was called with page filters")
+    public void shouldReturnCustomersWhenRequestWasCalledWithPageFilters() {
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class)))
                 .thenReturn(CustomerTestHelper.getCustomers());
+
         String url = CustomerTestHelper.makeUrl(this.port) + "?page=1&size=10";
         var response = this.makingGetRequest(url, GenericPaginatedResponseDTO.class);
         List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
@@ -125,9 +142,29 @@ public class GetCustomerControllerTests {
     }
 
     @Test
+    @DisplayName("On Get Customers: Should return customers list when request was called with page filters and filters")
+    public void shouldReturnCustomersWhenRequestWasCalledWithPageFiltersAndFilters() {
+        when(this.findCustomerService.findCustomers(any(FiltersDataDTO.class), any(PageDataDTO.class)))
+                .thenReturn(CustomerTestHelper.getCustomers());
+
+        String url = CustomerTestHelper.makeUrl(this.port) +
+                "?page=1&size=10&filter=name:eq:Gabriel&filter=document:ne:123";
+        var response = this.makingGetRequest(url, GenericPaginatedResponseDTO.class);
+        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+
+        assertNotNull(customers);
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
+        IntStream.range(0, CustomerTestHelper.getCustomers().size())
+                .forEach(index ->
+                        this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index))
+                );
+    }
+
+    @Test
     @DisplayName("On Get Customers: Should throw InternalServerError when errors occurs to find customer")
     public void shouldThrowInternalServerErrorWhenErrorsOccursToFindCustomer() {
-        when(this.findCustomerService.findCustomers(any(PageFiltersDataDTO.class))).thenThrow(RuntimeException.class);
+        when(this.findCustomerService.findCustomers(any(PageDataDTO.class))).thenThrow(RuntimeException.class);
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -137,9 +174,11 @@ public class GetCustomerControllerTests {
     @DisplayName("On Get CustomerById: Should return customer when the customer exists")
     public void shouldReturnCustomersWhenTheCustomerExists() {
         Customer mockedCustomer = CustomerTestHelper.getCustomers().get(0);
+
         when(this.findCustomerService.findCustomerById(any(String.class))).thenReturn(mockedCustomer);
         var response = this.makingGetRequest(
                 CustomerTestHelper.makeUrl(this.port, mockedCustomer.getId()), CustomerDto.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         this.assertCustomerFields(response.getBody(), mockedCustomer);

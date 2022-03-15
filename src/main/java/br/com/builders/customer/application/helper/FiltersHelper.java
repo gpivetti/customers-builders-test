@@ -1,39 +1,36 @@
-package br.com.builders.customer.commons.dto;
+package br.com.builders.customer.application.helper;
 
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.enums.FilterEnum;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
-import lombok.Builder;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
-@Builder
-public class FiltersDataFieldsDTO {
-    private String field;
-    private FilterEnum filter;
-    private Object value;
-
-    public static List<FiltersDataFieldsDTO> fromStringFilters(List<String> filters) throws InvalidParameterException {
+public class FiltersHelper {
+    public static List<FieldsDataDTO> buildFieldsFromFilters(List<String> filters) throws InvalidParameterException {
         try {
             if (filters == null || filters.isEmpty()) return new ArrayList<>();
             return filters.stream().map(filter -> {
                 List<String> filterPositions = Arrays.asList(filter.split(":"));
                 validateInvalidFilterPositions(filterPositions);
-                return FiltersDataFieldsDTO.builder()
-                        .field(filterPositions.get(0))
-                        .filter(getFilterOperationOnPositions(filterPositions))
-                        .value(filterPositions.get(filterPositions.size() - 1))
-                        .build();
+                return new FieldsDataDTO(filterPositions.get(0),
+                        getFilterOperationOnPositions(filterPositions),
+                        filterPositions.get(filterPositions.size() - 1));
             }).collect(Collectors.toList());
         } catch (InvalidParameterException ex) {
             throw ex;
         } catch (Exception ex) {
             throw new InvalidParameterException("Error parsing string list filter ["+  ex.getMessage() + "]");
         }
+    }
+
+    public static List<String> buildQueryParametersFromListFilter(List<String> filters) {
+        return filters != null && !filters.isEmpty()
+                ? filters.stream().map(filter -> "filter="+filter).collect(Collectors.toList())
+                : null;
     }
 
     private static FilterEnum getFilterOperationOnPositions(List<String> filterPositions) {

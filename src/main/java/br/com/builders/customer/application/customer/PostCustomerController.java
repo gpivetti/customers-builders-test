@@ -2,6 +2,7 @@ package br.com.builders.customer.application.customer;
 
 import br.com.builders.customer.application.customer.dto.CustomerDto;
 import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.application.customer.mapper.CustomerMapper;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.main.exceptions.AppErrorException;

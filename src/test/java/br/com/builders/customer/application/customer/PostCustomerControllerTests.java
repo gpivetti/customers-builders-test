@@ -7,6 +7,7 @@ import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles(value = "default")
@@ -45,6 +47,11 @@ public class PostCustomerControllerTests {
     @Autowired
     private ModelMapper modelMapper;
 
+    @BeforeEach
+    public void beforeEach(){
+        reset(this.saveCustomerService);
+    }
+
     @Test
     @DisplayName("On Post Customer: Should return success on customer insert when parameters are correct")
     public void shouldReturnSuccessWhenAllParametersAreCorrect() {
@@ -64,10 +71,12 @@ public class PostCustomerControllerTests {
     public void shouldReturnErrorWhenNameOfPostPayloadIsNull() {
         InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setName(null);
+
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
                 body,
                 CustomerDto.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
@@ -77,10 +86,12 @@ public class PostCustomerControllerTests {
     public void shouldReturnErrorWhenDocumentOfPostPayloadIsNull() {
         InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setDocument(null);
+
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
                 body,
                 ApiResponseErrorDTO.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }
@@ -90,10 +101,12 @@ public class PostCustomerControllerTests {
     public void shouldReturnErrorWhenBirthdateOfPostPayloadIsNull() {
         InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setBirthdate(null);
+
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
                 body,
                 ApiResponseErrorDTO.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
     }

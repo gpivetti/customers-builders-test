@@ -1,9 +1,8 @@
 package br.com.builders.customer.infra.mongo.repositories.customer;
 
 import br.com.builders.customer.commons.dto.FiltersDataDTO;
-import br.com.builders.customer.commons.dto.PageFiltersDataDTO;
+import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
-import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import br.com.builders.customer.infra.mongo.repositories.customer.mappers.CustomerFilterEntityMapper;
@@ -32,16 +31,15 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
     }
 
     @Override
-    public List<Customer> findAll(PageFiltersDataDTO pageFilters) {
-        return this.findAll(null, pageFilters);
+    public List<Customer> findAll(PageDataDTO pages) {
+        return this.findAll(null, pages);
     }
 
     @Override
-    public List<Customer> findAll(FiltersDataDTO<FiltersCustomerDto> customerFilters,
-                                  PageFiltersDataDTO pageFilters) {
+    public <T> List<Customer> findAll(FiltersDataDTO<T> customerFilters, PageDataDTO pages) {
         MongoQueryProcessorHelper queryProcessor = new MongoQueryProcessorHelper();
         this.setQueryWithFilters(queryProcessor, customerFilters);
-        this.setQueryWithPages(queryProcessor, pageFilters);
+        this.setQueryWithPages(queryProcessor, pages);
         List<CustomerEntity> customers = this.mongoTemplate.find(queryProcessor.getQueries(), CustomerEntity.class);
         return customers.stream().map(this::mapToModel).collect(Collectors.toList());
     }
@@ -59,16 +57,15 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
         return customer != null ? this.mapToModel(customer) : null;
     }
 
-    private void setQueryWithFilters(MongoQueryProcessorHelper queryProcessor,
-                                     FiltersDataDTO<FiltersCustomerDto> customerFilter) {
+    private <T> void setQueryWithFilters(MongoQueryProcessorHelper queryProcessor, FiltersDataDTO<T> customerFilter) {
         if (customerFilter != null && customerFilter.getFilterClass() != null) {
             Map<String, String> mapFields = CustomerFilterEntityMapper.mapFieldNames(customerFilter.getFilterClass());
             queryProcessor.setQueryByFilters(customerFilter.getFields(), mapFields);
         }
     }
 
-    private void setQueryWithPages(MongoQueryProcessorHelper queryProcessor, PageFiltersDataDTO pageFilters) {
-        queryProcessor.setQueryByPages(pageFilters);
+    private void setQueryWithPages(MongoQueryProcessorHelper queryProcessor, PageDataDTO pages) {
+        queryProcessor.setQueryByPages(pages);
     }
 
     private Customer mapToModel(CustomerEntity customer) {

@@ -4,7 +4,7 @@ import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +12,7 @@ public class Customer {
     private String id;
     private String name;
     private String document;
-    private Date birthdate;
+    private LocalDate birthdate;
 
     public int getAge() {
         return 0;
@@ -59,7 +59,7 @@ public class Customer {
             return this;
         }
 
-        public Builder birthdate(Date birthdate) {
+        public Builder birthdate(LocalDate birthdate) {
             customer.setBirthdate(birthdate);
             return this;
         }

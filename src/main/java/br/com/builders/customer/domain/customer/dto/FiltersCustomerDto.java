@@ -1,13 +1,10 @@
 package br.com.builders.customer.domain.customer.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -15,5 +12,5 @@ import java.util.Date;
 public class FiltersCustomerDto {
     private String name;
     private String document;
-    private Date birthdate;
+    private LocalDate birthdate;
 }

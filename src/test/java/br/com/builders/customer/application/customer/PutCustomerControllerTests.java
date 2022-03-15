@@ -7,6 +7,7 @@ import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles(value = "default")
@@ -45,15 +47,22 @@ public class PutCustomerControllerTests {
     @Autowired
     private ModelMapper modelMapper;
 
+    @BeforeEach
+    public void beforeEach(){
+        reset(this.saveCustomerService);
+    }
+
     @Test
     @DisplayName("On Put Customer: Should return success on customer update when parameters are correct")
     public void shouldReturnSuccessWhenAllParametersAreCorrect() {
         Customer customer = CustomerTestHelper.getCustomers().get(0);
         when(this.saveCustomerService.update(any(String.class), any(SaveCustomerDto.class))).thenReturn(customer);
+
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port, customer.getId()),
                 CustomerTestHelper.getCustomerToSave(customer),
                 CustomerDto.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         this.assertCustomerFields(response.getBody(), CustomerTestHelper.getCustomers().get(0));

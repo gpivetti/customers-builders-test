@@ -1,4 +1,4 @@
-package br.com.builders.customer.application.customer;
+package br.com.builders.customer.application.customer.mapper;
 
 import br.com.builders.customer.application.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;

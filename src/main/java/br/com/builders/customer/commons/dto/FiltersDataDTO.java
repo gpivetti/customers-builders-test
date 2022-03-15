@@ -1,62 +1,68 @@
 package br.com.builders.customer.commons.dto;
 
+import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import lombok.Data;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 public class FiltersDataDTO<T> {
     private Class<T> filterClass;
-    private List<FiltersDataFieldsDTO> fields;
+    private List<FieldsDataDTO> fields;
 
     private FiltersDataDTO() {}
 
-    private FiltersDataDTO(Class<T> filterClass, List<FiltersDataFieldsDTO> filterFields) {
+    private FiltersDataDTO(Class<T> filterClass, List<FieldsDataDTO> filterFields) {
         this.filterClass = filterClass;
         this.fields = filterFields;
     }
 
-    public static FiltersDataDTO<Void> of(List<FiltersDataFieldsDTO> fields) {
+    public static FiltersDataDTO<Void> fromFields(List<FieldsDataDTO> fields) {
         return new FiltersDataDTO<>(null, fields);
     }
 
-    public static <S> FiltersDataDTO<S> of(List<FiltersDataFieldsDTO> fields, Class<S> source)
-            throws InvalidParameterException {
+    public static <S> FiltersDataDTO<S> fromClassFields(List<FieldsDataDTO> fields, Class<S> source)
+            throws AppErrorException, InvalidParameterException {
         try {
             List<Field> classFields = Arrays.asList(source.getDeclaredFields());
-            return new FiltersDataDTO<>(
-                    source,
-                    fields.stream().peek(filter -> {
-                        Field field = classFields.stream()
-                                .filter(currentField -> currentField.getName().equals(filter.getField()))
-                                .findFirst()
-                                .orElse(null);
-                        if (field == null) {
-                            throw new InvalidParameterException("Field " + filter.getField() + " " +
-                                    "not allowed for filter");
-                        }
-                        filter.setField(field.getName());
-                        filter.setValue(mapFieldValue(field, (String) filter.getValue()));
-                    }).collect(Collectors.toList()));
+            fields = fields.stream().peek(filter -> {
+                Field field = findFieldOnClassFields(classFields, filter.getField());
+                filter.setField(field.getName());
+                if (filter.getValue() instanceof String) {
+                    filter.setValue(normalizeFieldValue(field, (String) filter.getValue()));
+                }
+            }).collect(Collectors.toList());
+            return new FiltersDataDTO<>(source, fields);
         } catch (InvalidParameterException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new InvalidParameterException("Error processing filter ["+  ex.getMessage() + "]");
+            throw new AppErrorException("Error processing filter ["+  ex.getMessage() + "]");
         }
     }
 
-    private static Object mapFieldValue(Field field, String filterValue) {
+    private static Field findFieldOnClassFields(List<Field> classFields, String fieldName) {
+        return classFields.stream()
+                .filter(currentField -> currentField.getName().equals(fieldName))
+                .findFirst()
+                .orElseThrow(() -> new InvalidParameterException("Field " + fieldName + " not allowed for filter"));
+    }
+
+    private static Object normalizeFieldValue(Field field, String filterValue) {
         try {
             Object value;
-            switch(field.getType().getSimpleName().toLowerCase()) {
+            String fieldType = field.getType().getSimpleName().toLowerCase();
+            switch(fieldType) {
                 case "date":
+                case "localdate":
+                case "localdatetime":
+                case "zoneddatetime":
                     value = convertStringToDate(filterValue);
                     break;
                 case "integer":
@@ -68,18 +74,20 @@ public class FiltersDataDTO<T> {
                     value = Double.valueOf(filterValue);
                     break;
                 case "string":
-                default:
                     value = filterValue;
                     break;
+                default:
+                    throw new InvalidParameterException("Type " + fieldType + " not allowed to filter " + field);
             }
             return value;
-        } catch (Exception e) {
+        } catch (InvalidParameterException ex) {
+            throw ex;
+        } catch (Exception ex) {
             throw new InvalidParameterException("Invalid pattern for field " + field);
         }
     }
 
-    private static Date convertStringToDate(String dateString) throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.parse(dateString);
+    private static LocalDate convertStringToDate(String dateString) throws ParseException {
+        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MMM-dd"));
     }
 }
