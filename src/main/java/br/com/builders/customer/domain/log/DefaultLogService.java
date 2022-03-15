@@ -10,6 +10,10 @@ public class DefaultLogService implements LogService {
 
     @Override
     public void sendLogError(String token, String errorMessage) {
-        LOG.error("{}: {}", token, errorMessage);
+        this.sendLog(LogData.of(token, errorMessage));
+    }
+
+    private void sendLog(LogData logData) {
+        LOG.error("at {} - {}: {}", logData.getProcessedAt(), logData.getToken(), logData.getErrorMessage());
     }
 }

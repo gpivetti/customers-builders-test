@@ -6,6 +6,7 @@ import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
+import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,8 +26,8 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 @ActiveProfiles(value = "default")
 @SpringBootTest(
@@ -41,6 +42,9 @@ public class PutCustomerControllerTests {
     @MockBean
     private SaveCustomerService saveCustomerService;
 
+    @MockBean
+    private LogService logService;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -49,6 +53,7 @@ public class PutCustomerControllerTests {
 
     @BeforeEach
     public void beforeEach(){
+        reset(this.logService);
         reset(this.saveCustomerService);
     }
 
@@ -77,6 +82,7 @@ public class PutCustomerControllerTests {
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     @Test
@@ -88,6 +94,7 @@ public class PutCustomerControllerTests {
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.METHOD_NOT_ALLOWED);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     @Test
@@ -114,6 +121,7 @@ public class PutCustomerControllerTests {
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     @Test
@@ -126,6 +134,7 @@ public class PutCustomerControllerTests {
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     private void assertCustomerFields(CustomerDto returnedBody, Customer mockedCustomer) {

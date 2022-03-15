@@ -4,6 +4,7 @@ import br.com.builders.customer.application.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.application.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.application.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
+import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,9 @@ public class DeleteCustomerControllerTests {
     @MockBean
     private DeleteCustomerService deleteCustomerService;
 
+    @MockBean
+    private LogService logService;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -47,6 +51,7 @@ public class DeleteCustomerControllerTests {
 
     @BeforeEach
     public void beforeEach(){
+        reset(this.logService);
         reset(this.deleteCustomerService);
     }
 
@@ -81,6 +86,7 @@ public class DeleteCustomerControllerTests {
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     public <T> ResponseEntity<T> mapCustomersResponse(String url, Class<T> clazz) {

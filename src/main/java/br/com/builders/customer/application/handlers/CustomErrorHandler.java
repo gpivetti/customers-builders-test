@@ -62,14 +62,6 @@ public class CustomErrorHandler extends BaseErrorHandler {
         return this.handleErrorResponse(responseDTO);
     }
 
-    private List<ApiResponseErrorDTO.Errors> normalizeResourceNotFoundErrors(ResourceNotFoundException ex) {
-        return this.checkValidResourceNotFoundErrorException(ex)
-                ? ex.filters().entrySet().stream()
-                    .map(filter -> new ApiResponseErrorDTO.Errors(filter.getKey(), filter.getValue()))
-                    .collect(Collectors.toList())
-                : null;
-    }
-
     private boolean checkValidResourceNotFoundErrorException(ResourceNotFoundException ex) {
         return ex.filters() != null && !ex.filters().isEmpty() && StringUtils.isNotEmpty(ex.resource());
     }

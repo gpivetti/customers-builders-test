@@ -9,6 +9,7 @@ import br.com.builders.customer.commons.dto.FiltersDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
+import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +52,9 @@ public class GetCustomerControllerTests {
     @MockBean
     private FindCustomerService findCustomerService;
 
+    @MockBean
+    private LogService logService;
+
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -59,6 +63,7 @@ public class GetCustomerControllerTests {
 
     @BeforeEach
     public void beforeEach(){
+        reset(this.logService);
         reset(this.findCustomerService);
     }
 
@@ -168,6 +173,7 @@ public class GetCustomerControllerTests {
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
     @Test
