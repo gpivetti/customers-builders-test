@@ -45,6 +45,7 @@ public class CustomerTestHelper {
     public static HttpHeaders getDefaultHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.setBasicAuth("builders", "test");
         return httpHeaders;
     }
 

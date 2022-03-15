@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -56,6 +57,12 @@ public class PostCustomerControllerTests {
         reset(this.logService);
         reset(this.saveCustomerService);
     }
+
+    @Value("${app.api-user}")
+    private String user;
+
+    @Value("${app.api-password}")
+    private String password;
 
     @Test
     @DisplayName("On Post Customer: Should return success on customer insert when parameters are correct")
@@ -166,6 +173,6 @@ public class PostCustomerControllerTests {
 
     public <T> ResponseEntity<T> mapCustomersResponse(String url, Object payload, Class<T> clazz) {
         HttpEntity<Object> request = new HttpEntity<>(payload, CustomerTestHelper.getDefaultHeaders());
-        return restTemplate.exchange(url, HttpMethod.POST, request, clazz);
+        return restTemplate.withBasicAuth(this.user, this.password).exchange(url, HttpMethod.POST, request, clazz);
     }
 }

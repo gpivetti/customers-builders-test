@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -56,10 +57,16 @@ public class GetCustomerControllerTests {
     private LogService logService;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    public TestRestTemplate restTemplate;
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value("${app.api-user}")
+    private String user;
+
+    @Value("${app.api-password}")
+    private String password;
 
     @BeforeEach
     public void beforeEach(){
@@ -219,7 +226,7 @@ public class GetCustomerControllerTests {
 
     public <T> ResponseEntity<T> makingGetRequest(String url, Class<T> clazz) {
         HttpEntity<Object> request = new HttpEntity<>(CustomerTestHelper.getDefaultHeaders());
-        return restTemplate.exchange(url, HttpMethod.GET, request, clazz);
+        return this.restTemplate.withBasicAuth(this.user, this.password).exchange(url, HttpMethod.GET, request, clazz);
     }
 
     public List<CustomerDto> mapCustomersResponse(GenericPaginatedResponseDTO responseBody) {

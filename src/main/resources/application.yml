@@ -18,3 +18,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/builders?readPreference=primary&ssl=false&retryWrites=false&authSource=admin
+
+app:
+  api-user: builders
+  api-password: test
