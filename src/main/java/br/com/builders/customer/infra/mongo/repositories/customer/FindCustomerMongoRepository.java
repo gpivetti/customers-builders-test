@@ -37,10 +37,8 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
 
     @Override
     public <T> List<Customer> findAll(FiltersDataDTO<T> customerFilters, PageDataDTO pages) {
-        MongoQueryProcessorHelper queryProcessor = new MongoQueryProcessorHelper();
-        this.setQueryWithFilters(queryProcessor, customerFilters);
-        this.setQueryWithPages(queryProcessor, pages);
-        List<CustomerEntity> customers = this.mongoTemplate.find(queryProcessor.getQueries(), CustomerEntity.class);
+        Query query = this.getQueryForFindCustomers(customerFilters, pages);
+        List<CustomerEntity> customers = this.mongoTemplate.find(query, CustomerEntity.class);
         return customers.stream().map(this::mapToModel).collect(Collectors.toList());
     }
 
@@ -55,6 +53,13 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
         CustomerEntity customer = this.mongoTemplate
                 .findOne(Query.query(Criteria.where("document").is(document)), CustomerEntity.class);
         return customer != null ? this.mapToModel(customer) : null;
+    }
+
+    private <T> Query getQueryForFindCustomers(FiltersDataDTO<T> customerFilters, PageDataDTO pages) {
+        MongoQueryProcessorHelper queryProcessor = new MongoQueryProcessorHelper();
+        this.setQueryWithFilters(queryProcessor, customerFilters);
+        this.setQueryWithPages(queryProcessor, pages);
+        return queryProcessor.getQueries();
     }
 
     private <T> void setQueryWithFilters(MongoQueryProcessorHelper queryProcessor, FiltersDataDTO<T> customerFilter) {

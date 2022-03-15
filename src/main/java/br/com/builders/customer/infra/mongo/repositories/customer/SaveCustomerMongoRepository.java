@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -50,13 +51,13 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
     }
 
     private CustomerEntity insertCustomer(CustomerEntity customerEntity) {
-        customerEntity.setCreatedAt(new Date());
-        customerEntity.setUpdatedAt(new Date());
+        customerEntity.setCreatedAt(LocalDateTime.now());
+        customerEntity.setUpdatedAt(LocalDateTime.now());
         return this.mongoTemplate.save(customerEntity);
     }
 
     private void updateCustomer(CustomerEntity customerEntity) {
-        customerEntity.setUpdatedAt(new Date());
+        customerEntity.setUpdatedAt(LocalDateTime.now());
         this.mongoTemplate.update(CustomerEntity.class)
                 .matching(Query.query(Criteria.where("id").is(customerEntity.getId())))
                 .apply(this.buildUpdateFields(customerEntity))

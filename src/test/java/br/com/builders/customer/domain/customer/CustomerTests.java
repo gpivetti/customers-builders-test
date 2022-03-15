@@ -45,4 +45,10 @@ public class CustomerTests {
         Customer customer = new Customer.Builder().birthdate(localDate).build();
         assertEquals(customer.getAge(), 0);
     }
+
+    @Test
+    @DisplayName("On Customer: Should return zero years old of costumer when birthdate is null")
+    public void shouldReturnZeroYearsOldOfCostumerWhenBirthdateIsNull() {
+        assertEquals(new Customer.Builder().birthdate(null).build().getAge(), 0);
+    }
 }

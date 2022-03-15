@@ -17,18 +17,19 @@ public class Customer {
 
     public int getAge() {
         LocalDate currentDate = LocalDate.now();
-        return birthdate.isAfter(currentDate)
+        return this.birthdate == null || this.birthdate.isAfter(currentDate)
                 ? 0
                 : Period.between(this.birthdate, currentDate).getYears();
     }
 
     public String getAgeNormalized() {
         LocalDate currentDate = LocalDate.now();
-        return birthdate.isAfter(currentDate)
-                ? "0y0m0d"
-                : (Period.between(this.birthdate, currentDate).getYears() + "y" +
-                    Period.between(this.birthdate, currentDate).getMonths() + "m" +
-                    Period.between(this.birthdate, currentDate).getDays() + "yd");
+        if (this.birthdate == null || birthdate.isAfter(currentDate)) {
+            return "0y0m0d";
+        } else {
+            Period period = Period.between(this.birthdate, currentDate);
+            return period.getYears() + "y" + period.getMonths() + "y" + period.getDays() + "d";
+        }
     }
 
     private Customer() {}
