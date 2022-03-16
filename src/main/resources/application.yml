@@ -17,7 +17,7 @@ springdoc:
 spring:
   data:
     mongodb:
-      uri: mongodb://root:123@localhost:27017/builders?readPreference=primary&ssl=false&retryWrites=false&authSource=admin
+      uri: mongodb://root:123@192.168.0.3:27017/builders?readPreference=primary&ssl=false&retryWrites=false&authSource=admin
   redis:
     password:
     host: localhost
