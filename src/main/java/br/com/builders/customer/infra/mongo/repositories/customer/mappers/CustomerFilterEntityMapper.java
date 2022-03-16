@@ -1,6 +1,7 @@
 package br.com.builders.customer.infra.mongo.repositories.customer.mappers;
 
 import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
+import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import br.com.builders.customer.main.exceptions.InvalidConstraintException;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
 
@@ -11,10 +12,9 @@ public class CustomerFilterEntityMapper {
     public static <T> Map<String, String> mapFieldNames(Class<T> clazz) throws InvalidParameterException {
         try {
             if (Class.forName(clazz.getName()) == FiltersCustomerDto.class) {
-                return mappingCustomerEntity();
-            } else {
-                throw new InvalidParameterException("Invalid Filter Class");
+                return mappingFiltersCustomerToEntityFields();
             }
+            throw new InvalidParameterException("Invalid Filter Class");
         } catch (InvalidConstraintException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -22,11 +22,14 @@ public class CustomerFilterEntityMapper {
         }
     }
 
-    private static Map<String, String> mappingCustomerEntity() {
+    private static Map<String, String> mappingFiltersCustomerToEntityFields() throws NoSuchFieldException {
         return new HashMap<>(){{
-            put("name", "name");
-            put("document", "document");
-            put("birthdate", "birthdate");
+            put(FiltersCustomerDto.class.getDeclaredField("name").getName(),
+                    CustomerEntity.class.getDeclaredField("name").getName());
+            put(FiltersCustomerDto.class.getDeclaredField("document").getName(),
+                    CustomerEntity.class.getDeclaredField("document").getName());
+            put(FiltersCustomerDto.class.getDeclaredField("birthdate").getName(),
+                    CustomerEntity.class.getDeclaredField("birthdate").getName());
         }};
     }
 }

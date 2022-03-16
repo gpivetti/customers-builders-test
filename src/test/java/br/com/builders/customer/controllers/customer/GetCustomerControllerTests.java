@@ -39,12 +39,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 @ActiveProfiles(value = "default")
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @DisplayName("[UT] On Processing GetCustomerController")
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class GetCustomerControllerTests {
 
     @LocalServerPort

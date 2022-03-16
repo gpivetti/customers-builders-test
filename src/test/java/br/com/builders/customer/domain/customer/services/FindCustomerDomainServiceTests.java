@@ -23,12 +23,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("unchecked")
 @ActiveProfiles(value = "default")
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @DisplayName("[UT] On Handle FindCustomerDomainService")
-@SuppressWarnings("unchecked")
 public class FindCustomerDomainServiceTests {
 
     @MockBean

@@ -1,5 +1,6 @@
 package br.com.builders.customer.domain.customer;
 
+import br.com.builders.customer.domain.customer.Customer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

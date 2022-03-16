@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Service
 public class SaveCustomerMongoRepository implements SaveCustomerRepository {
@@ -42,12 +41,6 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
         this.validateCustomerId(customer.getId());
         this.updateCustomer(this.mapToEntity(customer));
         return customer;
-    }
-
-    @Override
-    public void delete(String customerId) {
-        this.validateCustomerId(customerId);
-        this.mongoTemplate.findAndRemove(Query.query(Criteria.where("id").is(customerId)), CustomerEntity.class);
     }
 
     private CustomerEntity insertCustomer(CustomerEntity customerEntity) {

@@ -1,9 +1,9 @@
 package br.com.builders.customer.domain.customer.services;
 
 import br.com.builders.customer.domain.customer.Customer;
+import br.com.builders.customer.domain.customer.repository.DeleteCustomerRepository;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
-import br.com.builders.customer.domain.customer.repository.SaveCustomerRepository;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +15,20 @@ import java.util.Map;
 @Service
 public class DeleteCustomerDomainService implements DeleteCustomerService {
     private final FindCustomerRepository findCustomerRepository;
-    private final SaveCustomerRepository saveCustomerRepository;
+    private final DeleteCustomerRepository deleteCustomerRepository;
 
     @Autowired
     public DeleteCustomerDomainService(final FindCustomerRepository findCustomerRepository,
-                                       final SaveCustomerRepository saveCustomerRepository) {
+                                       final DeleteCustomerRepository deleteCustomerRepository) {
         this.findCustomerRepository = findCustomerRepository;
-        this.saveCustomerRepository = saveCustomerRepository;
+        this.deleteCustomerRepository = deleteCustomerRepository;
     }
 
     @Override
     public void deleteCustomer(String customerId) throws ResourceNotFoundException {
         this.validateCustomerId(customerId);
         this.validateIfCustomerExists(customerId);
-        this.saveCustomerRepository.delete(customerId);
+        this.deleteCustomerRepository.delete(customerId);
     }
 
     private void validateCustomerId(String customerId) {

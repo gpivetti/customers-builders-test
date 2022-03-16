@@ -2,6 +2,8 @@ package br.com.builders.customer.domain.customer.validator;
 
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
+import br.com.builders.customer.domain.customer.validator.CustomerBusinessValidator;
+import br.com.builders.customer.domain.customer.validator.DefaultCustomerBusinessValidator;
 import br.com.builders.customer.main.exceptions.InvalidConstraintException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

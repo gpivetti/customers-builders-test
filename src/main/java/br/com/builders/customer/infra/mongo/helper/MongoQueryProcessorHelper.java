@@ -29,16 +29,6 @@ public class MongoQueryProcessorHelper {
         this.query.with(PageRequest.of(pageFilters.getPage(), pageFilters.getSize()));
     }
 
-    public void setQueryByFilters(List<FieldsDataDTO> filters) throws InvalidParameterException {
-        if (filters == null || filters.isEmpty()) return;
-        filters.forEach(filter -> {
-            if (filter.getValue() != null) {
-                this.query.addCriteria(
-                        this.normalizeCriteria(filter.getField(), filter.getFilter(), filter.getValue()));
-            }
-        });
-    }
-
     public void setQueryByFilters(List<FieldsDataDTO> filters, Map<String, String> mapFields)
             throws InvalidParameterException {
         if (filters == null || filters.isEmpty()) return;
