@@ -1,7 +1,7 @@
 package br.com.builders.customer.controllers.customer;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertCustomerDto;
 import br.com.builders.customer.controllers.customer.mapper.CustomerMapper;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
@@ -32,9 +32,9 @@ public class PostCustomerController {
     @PostMapping(value = "",
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Inserting new Customer")
-    public ResponseEntity<?> postCustomer(@Valid @RequestBody InsertUpdateCustomerDto customerDto) {
+    public ResponseEntity<?> postCustomer(@Valid @RequestBody InsertCustomerDto customerDto) {
         try {
-            Customer customer = this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(customerDto));
+            Customer customer = this.insertCustomer(customerDto);
             this.validateInsertedCustomer(customer);
             return new ResponseEntity<>(CustomerDTO.fromCustomer(customer), HttpStatus.OK);
         } catch (InvalidConstraintException | ObjectValidationException | AppErrorException ex) {
@@ -42,6 +42,10 @@ public class PostCustomerController {
         } catch (Exception ex) {
             throw new AppErrorException(ex);
         }
+    }
+
+    private Customer insertCustomer(InsertCustomerDto insertCustomer) {
+        return this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(insertCustomer));
     }
 
     private void validateInsertedCustomer(Customer customer) throws AppErrorException {

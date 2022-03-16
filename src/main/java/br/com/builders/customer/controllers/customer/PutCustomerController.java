@@ -1,7 +1,7 @@
 package br.com.builders.customer.controllers.customer;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.UpdateCustomerDto;
 import br.com.builders.customer.controllers.customer.mapper.CustomerMapper;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.Customer;
@@ -33,12 +33,11 @@ public class PutCustomerController {
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Updating Customer by Id")
     public ResponseEntity<?> putCustomer(@NotNull @PathVariable String customerId,
-                                         @RequestBody InsertUpdateCustomerDto customerDto) {
+                                         @RequestBody UpdateCustomerDto customerDto) {
         try {
             this.validateRequest(customerDto);
-            Customer customer = this.saveCustomerService.update(customerId,
-                    CustomerMapper.toSaveCustomerDto(customerDto));
-            this.validateInsertedCustomer(customer);
+            Customer customer = this.updateCustomer(customerId, customerDto);
+            this.validateUpdatedCustomer(customer);
             return new ResponseEntity<>(CustomerDTO.fromCustomer(customer), HttpStatus.OK);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
@@ -49,13 +48,17 @@ public class PutCustomerController {
         }
     }
 
-    private void validateRequest(InsertUpdateCustomerDto customerDto) throws AppErrorException {
+    private Customer updateCustomer(String customerId, UpdateCustomerDto updateCustomer) {
+        return this.saveCustomerService.update(customerId, CustomerMapper.toSaveCustomerDto(updateCustomer));
+    }
+
+    private void validateRequest(UpdateCustomerDto customerDto) throws AppErrorException {
         if (customerDto == null) {
             throw new AppErrorException("Error on Update Customer [Null Request]");
         }
     }
 
-    private void validateInsertedCustomer(Customer customer) throws AppErrorException {
+    private void validateUpdatedCustomer(Customer customer) throws AppErrorException {
         if (customer == null) {
             throw new AppErrorException("Error on Update Customer [Null Response]");
         }

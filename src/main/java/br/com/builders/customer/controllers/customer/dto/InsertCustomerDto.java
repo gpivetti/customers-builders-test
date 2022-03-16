@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class InsertUpdateCustomerDto {
+public class InsertCustomerDto {
     @NotBlank(message = "name not be empty")
     @Schema(description = "Customer's name", required = true)
     private String name;

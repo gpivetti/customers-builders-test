@@ -1,6 +1,6 @@
 package br.com.builders.customer.feature.setup;
 
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertCustomerDto;
 import br.com.builders.customer.infra.mongo.entities.CustomerEntity;
 import org.bson.types.ObjectId;
 
@@ -8,14 +8,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class CustomerMockHelper {
-    public static InsertUpdateCustomerDto getCustomerForUpdate() {
-        return InsertUpdateCustomerDto.builder()
+    public static InsertCustomerDto getCustomerForUpdate() {
+        return InsertCustomerDto.builder()
                 .name("TestCustomer2")
                 .build();
     }
 
-    public static InsertUpdateCustomerDto getCustomerForInsert() {
-        return InsertUpdateCustomerDto.builder()
+    public static InsertCustomerDto getCustomerForInsert() {
+        return InsertCustomerDto.builder()
                 .name("TestCustomer")
                 .document("123123")
                 .birthdate(LocalDate.parse("1988-11-06"))

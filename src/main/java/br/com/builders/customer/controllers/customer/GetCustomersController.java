@@ -47,10 +47,11 @@ public class GetCustomersController {
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Getting Customers")
-    public GenericPaginatedResponseDTO<List<CustomerDTO>> getCustomers(@ParameterObject Pageable pageable,
-                                                                       @Parameter(description = FilterProcessorInfo.DESCRIPTION, example = FilterProcessorInfo.EXAMPLE)
-                @RequestParam(required = false) List<String> filter,
-                                                                       HttpServletRequest http) {
+    public GenericPaginatedResponseDTO<List<CustomerDTO>> getCustomers(
+            @ParameterObject Pageable pageable,
+            @Parameter(description = FilterProcessorInfo.DESCRIPTION, example = FilterProcessorInfo.EXAMPLE)
+            @RequestParam(required = false) List<String> filter,
+            HttpServletRequest http) {
         try {
             List<Customer> customers = this.findCustomers(filter, pageable);
             List<CustomerDTO> customersDto = this.mappingCustomers(customers);

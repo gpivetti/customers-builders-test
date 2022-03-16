@@ -36,4 +36,8 @@ public class DeleteCustomerController {
             throw new AppErrorException(ex);
         }
     }
+
+    private void insertCustomer(String customerId) {
+        this.deleteCustomerService.deleteCustomer(customerId);
+    }
 }
