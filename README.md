@@ -35,7 +35,8 @@ As seguintes rotas estão implementadas:
 
 ### Requisitos
 
-O único requisito será o **Docker** e o **Docker Compose** para a geração dos containers e execução da aplicação.
+O único requisito para a execução da aplicação será o **Docker** e o **Docker Compose** para a geração dos containers.
+<p>***Java11 e Maven***: Requisito para realizão dos testes localmente (testes integrados possuem um banco específico que será inicializado via docker-compose)</p>
 
 ### Documentação
 
@@ -98,7 +99,7 @@ OBS: Por padrão a api irá inicializar na porta 8080.
 
 Os testes da aplicação estão divididos em: Unitários e Integração.
 
-Para executá-los, execute os comandos abaixo. (Para integration tests, iremos subir um banco de testes antes)
+Para executá-los localmente, tenha o Maven, Docker e Java11 instalado na máquina, e execute os comandos abaixo. (Para integration tests, iremos subir um banco de testes antes)
 
 ```bash
 # testes unitarios
