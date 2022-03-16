@@ -1,6 +1,7 @@
-package br.com.builders.customer.domain.customer.services;
+package br.com.builders.customer.unit.domain.customer.services;
 
-import br.com.builders.customer.domain.customer.services.helpers.CustomerServiceTestHelper;
+import br.com.builders.customer.domain.customer.services.FindCustomerDomainService;
+import br.com.builders.customer.unit.domain.customer.services.helpers.CustomerServiceTestHelper;
 import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;

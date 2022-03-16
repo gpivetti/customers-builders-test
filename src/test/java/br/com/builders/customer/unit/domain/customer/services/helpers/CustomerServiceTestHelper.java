@@ -1,11 +1,10 @@
-package br.com.builders.customer.domain.customer.services.helpers;
+package br.com.builders.customer.unit.domain.customer.services.helpers;
 
 import br.com.builders.customer.domain.customer.Customer;
 
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class CustomerServiceTestHelper {

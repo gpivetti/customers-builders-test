@@ -1,4 +1,4 @@
-package br.com.builders.customer.controllers.customer.helpers;
+package br.com.builders.customer.unit.controllers.customer.helpers;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;

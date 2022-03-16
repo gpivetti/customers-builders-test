@@ -1,6 +1,6 @@
-package br.com.builders.customer.controllers.customer;
+package br.com.builders.customer.unit.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
+import br.com.builders.customer.unit.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;

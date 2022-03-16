@@ -1,4 +1,4 @@
-package br.com.builders.customer.domain.customer.validator;
+package br.com.builders.customer.unit.domain.customer.validator;
 
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;

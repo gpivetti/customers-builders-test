@@ -1,11 +1,12 @@
-package br.com.builders.customer.domain.customer.services;
+package br.com.builders.customer.unit.domain.customer.services;
 
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
 import br.com.builders.customer.domain.customer.repository.SaveCustomerRepository;
-import br.com.builders.customer.domain.customer.services.helpers.CustomerServiceTestHelper;
+import br.com.builders.customer.domain.customer.services.SaveCustomerDomainService;
+import br.com.builders.customer.unit.domain.customer.services.helpers.CustomerServiceTestHelper;
 import br.com.builders.customer.domain.customer.validator.CustomerBusinessValidator;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;

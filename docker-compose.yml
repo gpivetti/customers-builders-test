@@ -1,16 +1,28 @@
 version: '3.3'
 
-volumes:
-  mongodb-data-container:
-    driver: local
-
 services:
+  test-db:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    expose:
+      - 27018
+    ports:
+      - "27018:27018"
+    environment:
+      TZ: America/Sao_Paulo
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123
+      MONGO_INITDB_DATABASE: builders-test
+    networks:
+      netBackEnd:
+        ipv4_address: 192.168.0.2
+
+
   db:
     image: mongo:latest
     container_name: mongodb
     restart: always
-#    expose:
-#      - 27017
     ports:
       - "27017:27017"
     environment:
@@ -18,8 +30,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123
       MONGO_INITDB_DATABASE: builders
-#    volumes:
-#      - mongodb-data-container:/data/db
 
   maven:
     container_name: maven
@@ -42,3 +52,10 @@ services:
       - "8080:8080"
     depends_on:
       - "db"
+
+networks:
+  netBackEnd:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24

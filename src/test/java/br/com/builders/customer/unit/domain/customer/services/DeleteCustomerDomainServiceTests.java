@@ -1,10 +1,11 @@
-package br.com.builders.customer.domain.customer.services;
+package br.com.builders.customer.unit.domain.customer.services;
 
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.DeleteCustomerService;
 import br.com.builders.customer.domain.customer.repository.DeleteCustomerRepository;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
-import br.com.builders.customer.domain.customer.services.helpers.CustomerServiceTestHelper;
+import br.com.builders.customer.domain.customer.services.DeleteCustomerDomainService;
+import br.com.builders.customer.unit.domain.customer.services.helpers.CustomerServiceTestHelper;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

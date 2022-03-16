@@ -1,7 +1,7 @@
-package br.com.builders.customer.controllers.customer;
+package br.com.builders.customer.unit.controllers.customer;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
+import br.com.builders.customer.unit.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.controllers.dto.GenericPaginatedResponseDTO;
@@ -12,6 +12,7 @@ import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.adapters.CustomerCacheAdapter;
 import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,7 +91,7 @@ public class GetCustomersControllerTests {
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
+        Assertions.assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
         IntStream.range(0, CustomerTestHelper.getCustomers().size())
                 .forEach(index ->
                         this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index)));
@@ -151,7 +152,7 @@ public class GetCustomersControllerTests {
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
+        Assertions.assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
         IntStream.range(0, CustomerTestHelper.getCustomers().size())
                 .forEach(index ->
                     this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index))
@@ -171,7 +172,7 @@ public class GetCustomersControllerTests {
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
+        Assertions.assertEquals(customers.size(), CustomerTestHelper.getCustomers().size());
         IntStream.range(0, CustomerTestHelper.getCustomers().size())
                 .forEach(index ->
                         this.assertCustomerFields(customers.get(index), CustomerTestHelper.getCustomers().get(index))

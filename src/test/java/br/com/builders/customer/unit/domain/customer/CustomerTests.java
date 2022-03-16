@@ -1,4 +1,4 @@
-package br.com.builders.customer.domain.customer;
+package br.com.builders.customer.unit.domain.customer;
 
 import br.com.builders.customer.domain.customer.Customer;
 import org.junit.jupiter.api.DisplayName;

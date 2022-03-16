@@ -1,13 +1,13 @@
-package br.com.builders.customer.controllers.customer;
+package br.com.builders.customer.unit.controllers.customer;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
-import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
+import br.com.builders.customer.unit.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.SaveCustomerService;
 import br.com.builders.customer.domain.customer.dto.SaveCustomerDto;
 import br.com.builders.customer.domain.log.LogService;
+import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ import static org.mockito.Mockito.times;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@DisplayName("[UT] On Processing PostCustomerController")
-public class PostCustomerControllerTests {
+@DisplayName("[UT] On Processing PutCustomerController")
+public class PutCustomerControllerTests {
 
     @LocalServerPort
     private int port;
@@ -52,85 +52,39 @@ public class PostCustomerControllerTests {
     @Autowired
     private ModelMapper modelMapper;
 
-    @BeforeEach
-    public void beforeEach(){
-        reset(this.logService);
-        reset(this.saveCustomerService);
-    }
-
     @Value("${app.api-user}")
     private String user;
 
     @Value("${app.api-password}")
     private String password;
 
+    @BeforeEach
+    public void beforeEach(){
+        reset(this.logService);
+        reset(this.saveCustomerService);
+    }
+
     @Test
-    @DisplayName("On Post Customer: Should return success on customer insert when parameters are correct")
+    @DisplayName("On Put Customer: Should return success on customer update when parameters are correct")
     public void shouldReturnSuccessWhenAllParametersAreCorrect() {
-        when(this.saveCustomerService.insert(any(SaveCustomerDto.class)))
-                .thenReturn(CustomerTestHelper.getCustomers().get(0));
+        Customer customer = CustomerTestHelper.getCustomers().get(0);
+        when(this.saveCustomerService.update(any(String.class), any(SaveCustomerDto.class))).thenReturn(customer);
+
         var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
-                CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
+                CustomerTestHelper.makeUrl(this.port, customer.getId()),
+                CustomerTestHelper.getCustomerToSave(customer),
                 CustomerDTO.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         this.assertCustomerFields(response.getBody(), CustomerTestHelper.getCustomers().get(0));
     }
 
     @Test
-    @DisplayName("On Post Customer: Should return error when name of post payload is null")
-    public void shouldReturnErrorWhenNameOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
-        body.setName(null);
-
-        var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
-                body,
-                CustomerDTO.class);
-
-        assertNotNull(response.getBody());
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
-    }
-
-    @Test
-    @DisplayName("On Post Customer: Should return error when document of post payload is null")
-    public void shouldReturnErrorWhenDocumentOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
-        body.setDocument(null);
-
-        var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
-                body,
-                ApiResponseErrorDTO.class);
-
-        assertNotNull(response.getBody());
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
-    }
-
-    @Test
-    @DisplayName("On Post Customer: Should return error when birthdate of post payload is null")
-    public void shouldReturnErrorWhenBirthdateOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
-        body.setBirthdate(null);
-
-        var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
-                body,
-                ApiResponseErrorDTO.class);
-
-        assertNotNull(response.getBody());
-        assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
-        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
-    }
-
-    @Test
-    @DisplayName("On Post Customer: Should return error when post payload is null")
+    @DisplayName("On Put Customer: Should return error when put payload is null")
     public void shouldReturnErrorWhenPostPayloadIsNull() {
         var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
+                CustomerTestHelper.makeUrl(this.port, "any_id"),
                 null,
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
@@ -139,11 +93,37 @@ public class PostCustomerControllerTests {
     }
 
     @Test
-    @DisplayName("On Post Customer: Should return error when errors occurs to save customer")
-    public void shouldReturnErrorWhenErrorsOccursToSaveCustomer() {
-        when(this.saveCustomerService.insert(any(SaveCustomerDto.class))).thenThrow(RuntimeException.class);
+    @DisplayName("On Put Customer: Should return error when customerId is null")
+    public void shouldReturnErrorWhenCustomerIdIsNull() {
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
+                CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
+                ApiResponseErrorDTO.class);
+        assertNotNull(response.getBody());
+        assertEquals(response.getStatusCode(), HttpStatus.METHOD_NOT_ALLOWED);
+        verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
+    }
+
+    @Test
+    @DisplayName("On Put Customer: Should return error when ResourceNotFound was returned")
+    public void shouldReturnErrorWhenResourceNotFoundWasReturned() {
+        when(this.saveCustomerService.update(any(String.class), any(SaveCustomerDto.class)))
+                .thenThrow(ResourceNotFoundException.class);
+        var response = this.mapCustomersResponse(
+                CustomerTestHelper.makeUrl(this.port, "any_id"),
+                CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
+                ApiResponseErrorDTO.class);
+        assertNotNull(response.getBody());
+        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("On Put Customer: Should return error when errors occurs to save customer")
+    public void shouldReturnErrorWhenErrorsOccursToSaveCustomer() {
+        when(this.saveCustomerService.update(any(String.class), any(SaveCustomerDto.class)))
+                .thenThrow(RuntimeException.class);
+        var response = this.mapCustomersResponse(
+                CustomerTestHelper.makeUrl(this.port, "any_id"),
                 CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
@@ -152,11 +132,11 @@ public class PostCustomerControllerTests {
     }
 
     @Test
-    @DisplayName("On Post Customer: Should return error when saved customer is null")
+    @DisplayName("On Put Customer: Should return error when saved customer is null")
     public void shouldReturnErrorWhenSavedCustomerIsNull() {
         when(this.saveCustomerService.insert(any(SaveCustomerDto.class))).thenReturn(null);
         var response = this.mapCustomersResponse(
-                CustomerTestHelper.makeUrl(this.port),
+                CustomerTestHelper.makeUrl(this.port, "any_id"),
                 CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
                 ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
@@ -173,6 +153,6 @@ public class PostCustomerControllerTests {
 
     public <T> ResponseEntity<T> mapCustomersResponse(String url, Object payload, Class<T> clazz) {
         HttpEntity<Object> request = new HttpEntity<>(payload, CustomerTestHelper.getDefaultHeaders());
-        return restTemplate.withBasicAuth(this.user, this.password).exchange(url, HttpMethod.POST, request, clazz);
+        return restTemplate.withBasicAuth(this.user, this.password).exchange(url, HttpMethod.PUT, request, clazz);
     }
 }

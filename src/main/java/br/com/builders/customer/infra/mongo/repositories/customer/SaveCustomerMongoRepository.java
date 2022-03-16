@@ -40,7 +40,7 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
     public Customer update(Customer customer) {
         this.validateCustomer(customer);
         this.validateCustomerId(customer.getId());
-        this.updateCustomer(this.mapToEntity(customer));
+        this.updateCustomer(customer.getId(), this.mapToEntity(customer));
         return customer;
     }
 
@@ -51,12 +51,11 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
         return this.mongoTemplate.save(customerEntity);
     }
 
-    private void updateCustomer(CustomerEntity customerEntity) {
+    private void updateCustomer(String customerId, CustomerEntity customerEntity) {
         customerEntity.setUpdatedAt(LocalDateTime.now());
-        this.mongoTemplate.update(CustomerEntity.class)
-                .matching(Query.query(Criteria.where("id").is(customerEntity.getId())))
-                .apply(this.buildUpdateFields(customerEntity))
-                .all();
+        this.mongoTemplate.updateFirst(Query.query(Criteria.where("id").is(customerId)),
+                this.buildUpdateFields(customerEntity),
+                CustomerEntity.class);
     }
 
     private Update buildUpdateFields(CustomerEntity customerEntity) {
