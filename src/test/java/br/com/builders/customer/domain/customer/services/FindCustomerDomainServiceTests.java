@@ -1,10 +1,8 @@
 package br.com.builders.customer.domain.customer.services;
 
 import br.com.builders.customer.domain.customer.services.helpers.CustomerServiceTestHelper;
-import br.com.builders.customer.commons.dto.FiltersDataDTO;
 import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
-import br.com.builders.customer.commons.enums.FilterEnum;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
@@ -56,12 +54,11 @@ public class FindCustomerDomainServiceTests {
     @DisplayName("On Find Customers: Should return customers on success when call service with page " +
             "and filters parameters")
     public void shouldReturnCustomersOnSuccessWhenCallServiceWithPageAndFiltersParameters() {
-        when(this.customerRepository.findAll(any(FiltersDataDTO.class), any(PageDataDTO.class)))
+        when(this.customerRepository.findAll(any(FieldsDataDTO.class), any(PageDataDTO.class)))
                 .thenReturn(CustomerServiceTestHelper.getCustomers());
 
         FindCustomerService service = this.mockService(this.customerRepository);
-        List<Customer> customers = service.findCustomers(this.mockValidFilters(),
-                new PageDataDTO(0, 20));
+        List<Customer> customers = service.findCustomers(this.mockFields(), new PageDataDTO(0, 20));
 
         assertNotNull(customers);
         assertEquals(customers.size(), CustomerServiceTestHelper.getCustomers().size());
@@ -117,11 +114,7 @@ public class FindCustomerDomainServiceTests {
         return new FindCustomerDomainService(customerRepository);
     }
 
-    private FiltersDataDTO<FiltersCustomerDto> mockValidFilters() {
-        List<FieldsDataDTO> fields = List.of(
-                new FieldsDataDTO("name", FilterEnum.EQUAL, "Gabriel"),
-                new FieldsDataDTO("document", FilterEnum.NOT_EQUAL, "123")
-        );
-        return FiltersDataDTO.fromClassFields(fields, FiltersCustomerDto.class);
+    private FieldsDataDTO<FiltersCustomerDto> mockFields() {
+        return FieldsDataDTO.fromClass(null, null, FiltersCustomerDto.class);
     }
 }

@@ -4,7 +4,6 @@ import br.com.builders.customer.controllers.customer.dto.CustomerDto;
 import br.com.builders.customer.controllers.dto.GenericPaginatedResponseDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.controllers.helper.FiltersHelper;
-import br.com.builders.customer.commons.dto.FiltersDataDTO;
 import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.FindCustomerService;
@@ -48,9 +47,9 @@ public class GetCustomerController {
                 @RequestParam(required = false) List<String> filter,
             HttpServletRequest http) {
         try {
-            List<Customer> customers = this.findCustomers(FiltersHelper.buildFieldsFromFilters(filter), pageable);
+            List<Customer> customers = this.findCustomers(filter, pageable);
             List<CustomerDto> customersDto = this.mappingCustomers(customers);
-            List<String> queryParameters = FiltersHelper.buildQueryParametersFromListFilter(filter);
+            List<String> queryParameters = FiltersHelper.buildQueryParametersFromStringFilter(filter);
             return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), queryParameters, pageable);
         } catch (InvalidParameterException | AppErrorException ex) {
             throw ex;
@@ -75,12 +74,13 @@ public class GetCustomerController {
         }
     }
 
-    private List<Customer> findCustomers(List<FieldsDataDTO> filterFields, Pageable pageable) {
-        PageDataDTO pageFilters = new PageDataDTO(pageable.getPageNumber(), pageable.getPageSize());
-        return filterFields.isEmpty()
-                ? this.findCustomerService.findCustomers(pageFilters)
+    private List<Customer> findCustomers(List<String> filter, Pageable pageable) {
+        return filter == null && pageable.getSort().isEmpty()
+                ? this.findCustomerService.findCustomers(PageDataDTO.fromPageable(pageable))
                 : this.findCustomerService.findCustomers(
-                        FiltersDataDTO.fromClassFields(filterFields, FiltersCustomerDto.class), pageFilters);
+                        FieldsDataDTO.fromClass(
+                                FiltersHelper.buildFilterList(filter), pageable.getSort(), FiltersCustomerDto.class),
+                        PageDataDTO.fromPageable(pageable));
     }
 
     private List<CustomerDto> mappingCustomers(List<Customer> customers) {

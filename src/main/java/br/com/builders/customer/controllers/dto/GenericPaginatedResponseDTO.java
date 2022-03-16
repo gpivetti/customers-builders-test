@@ -44,7 +44,7 @@ public class GenericPaginatedResponseDTO<T> {
 
     private String normalizeUrlQueryString(String uri, List<String> params, Pageable pageParams, LinkRel linkRel) {
         String realUrl = (uri != null ? uri : "") + "?size=" + pageParams.getPageSize();
-        realUrl += "&page" + (linkRel == LinkRel.prev
+        realUrl += "&page=" + (linkRel == LinkRel.prev
                 ? (pageParams.getPageNumber() == 1 ? 0 : pageParams.getPageNumber() - 1)
                 : pageParams.getPageNumber() + 1);
         if (params != null && !params.isEmpty()) {
@@ -52,7 +52,7 @@ public class GenericPaginatedResponseDTO<T> {
         }
         if (!pageParams.getSort().isEmpty()) {
             realUrl += "&sort=" + pageParams.getSort().stream()
-                    .map(order -> order.getProperty() + "," + order.getDirection().name())
+                    .map(order -> order.getProperty() + "," + order.getDirection().name().toLowerCase())
                     .collect(Collectors.joining("&sort="));
         }
         return realUrl;

@@ -1,6 +1,6 @@
 package br.com.builders.customer.infra.mongo.repositories.customer;
 
-import br.com.builders.customer.commons.dto.FiltersDataDTO;
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
@@ -36,8 +36,8 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
     }
 
     @Override
-    public <T> List<Customer> findAll(FiltersDataDTO<T> customerFilters, PageDataDTO pages) {
-        Query query = this.getQueryForFindCustomers(customerFilters, pages);
+    public <T> List<Customer> findAll(FieldsDataDTO<T> customerFields, PageDataDTO pages) {
+        Query query = this.getQueryForFindCustomers(customerFields, pages);
         List<CustomerEntity> customers = this.mongoTemplate.find(query, CustomerEntity.class);
         return customers.stream().map(this::mapToModel).collect(Collectors.toList());
     }
@@ -55,17 +55,25 @@ public class FindCustomerMongoRepository implements FindCustomerRepository {
         return customer != null ? this.mapToModel(customer) : null;
     }
 
-    private <T> Query getQueryForFindCustomers(FiltersDataDTO<T> customerFilters, PageDataDTO pages) {
+    private <T> Query getQueryForFindCustomers(FieldsDataDTO<T> customerFields, PageDataDTO pages) {
         MongoQueryProcessorHelper queryProcessor = new MongoQueryProcessorHelper();
-        this.setQueryWithFilters(queryProcessor, customerFilters);
+        this.setQueryWithFilters(queryProcessor, customerFields);
+        this.setQueryWithSorting(queryProcessor, customerFields);
         this.setQueryWithPages(queryProcessor, pages);
         return queryProcessor.getQueries();
     }
 
-    private <T> void setQueryWithFilters(MongoQueryProcessorHelper queryProcessor, FiltersDataDTO<T> customerFilter) {
-        if (customerFilter != null && customerFilter.getFilterClass() != null) {
-            Map<String, String> mapFields = CustomerFilterEntityMapper.mapFieldNames(customerFilter.getFilterClass());
-            queryProcessor.setQueryByFilters(customerFilter.getFields(), mapFields);
+    private <T> void setQueryWithFilters(MongoQueryProcessorHelper queryProcessor, FieldsDataDTO<T> customerFilter) {
+        if (customerFilter != null && customerFilter.getFieldsClass() != null) {
+            Map<String, String> mapFields = CustomerFilterEntityMapper.mapFieldNames(customerFilter.getFieldsClass());
+            queryProcessor.setQueryByFilters(customerFilter.getFilters(), mapFields);
+        }
+    }
+
+    private <T> void setQueryWithSorting(MongoQueryProcessorHelper queryProcessor, FieldsDataDTO<T> customerFilter) {
+        if (customerFilter != null && customerFilter.getFieldsClass() != null) {
+            Map<String, String> mapFields = CustomerFilterEntityMapper.mapFieldNames(customerFilter.getFieldsClass());
+            queryProcessor.setQueryBySorting(customerFilter.getSorting(), mapFields);
         }
     }
 

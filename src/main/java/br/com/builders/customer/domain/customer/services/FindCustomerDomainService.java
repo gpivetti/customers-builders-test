@@ -1,6 +1,6 @@
 package br.com.builders.customer.domain.customer.services;
 
-import br.com.builders.customer.commons.dto.FiltersDataDTO;
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.repository.FindCustomerRepository;
@@ -30,26 +30,30 @@ public class FindCustomerDomainService implements FindCustomerService {
     }
 
     @Override
-    public <T> List<Customer> findCustomers(FiltersDataDTO<T> filters, PageDataDTO pages) {
+    public <T> List<Customer> findCustomers(FieldsDataDTO<T> fields, PageDataDTO pages) {
         this.validatePageParameters(pages);
-        List<Customer> customers = this.findAllCustomers(filters, pages);
+        List<Customer> customers = this.findAllCustomers(fields, pages);
         return this.checkCustomers(customers) ? customers : new ArrayList<>();
     }
 
     @Override
     public Customer findCustomerById(String customerId) throws ResourceNotFoundException {
         Customer customer = this.customerRepository.findById(customerId);
-        if (customer == null) {
-            throw new ResourceNotFoundException("Customer", this.normalizeNotFoundCustomerExceptionFilters(customerId));
-        }
+        this.validateCustomerReturned(customerId, customer);
         return customer;
     }
 
-    private <T> List<Customer> findAllCustomers(FiltersDataDTO<T> filters,
-                                            PageDataDTO pages) {
-        return (filters == null || filters.getFields() == null || filters.getFields().isEmpty())
+    private <T> List<Customer> findAllCustomers(FieldsDataDTO<T> fields, PageDataDTO pages) {
+        return fields == null
                 ? this.customerRepository.findAll(pages)
-                : this.customerRepository.findAll(filters, pages);
+                : this.customerRepository.findAll(fields, pages);
+    }
+
+    private void validateCustomerReturned(String customerId, Customer customer) {
+        if (customer == null) {
+            throw new ResourceNotFoundException(Customer.class.getName(),
+                    this.normalizeNotFoundCustomerExceptionFilters(customerId));
+        }
     }
 
     private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {

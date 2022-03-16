@@ -5,7 +5,7 @@ import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.controllers.dto.GenericPaginatedResponseDTO;
-import br.com.builders.customer.commons.dto.FiltersDataDTO;
+import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
@@ -156,7 +156,7 @@ public class GetCustomerControllerTests {
     @Test
     @DisplayName("On Get Customers: Should return customers list when request was called with page filters and filters")
     public void shouldReturnCustomersWhenRequestWasCalledWithPageFiltersAndFilters() {
-        when(this.findCustomerService.findCustomers(any(FiltersDataDTO.class), any(PageDataDTO.class)))
+        when(this.findCustomerService.findCustomers(any(FieldsDataDTO.class), any(PageDataDTO.class)))
                 .thenReturn(CustomerTestHelper.getCustomers());
 
         String url = CustomerTestHelper.makeUrl(this.port) +
