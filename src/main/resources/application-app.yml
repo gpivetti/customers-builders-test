@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8295
 
 swagger:
   app-info:
@@ -17,7 +17,7 @@ springdoc:
 spring:
   data:
     mongodb:
-      uri: mongodb://root:123@localhost:27017/builders?readPreference=primary&ssl=false&retryWrites=false&authSource=admin
+      uri: mongodb://marisaroot:72e4ee9de0e81a2bedfc28e3ab3ee770@api-cep-mongo-cluster.cluster-c4gxzmhu24at.us-east-1.docdb.amazonaws.com:27017/bdtest?readPreference=primary&ssl=false&retryWrites=false
   redis:
     password:
     host: localhost
@@ -25,5 +25,5 @@ spring:
 
 
 app:
-  api-user: builder
+  api-user: builders
   api-password: test

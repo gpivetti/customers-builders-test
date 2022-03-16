@@ -8,5 +8,5 @@ VOLUME /tmp
 
 COPY target/*.jar /app.jar
 
-CMD java -Xmx$JVM_MEMORY -javaagent:/newrelic/newrelic.jar -Dnewrelic.environment=$ENVIRONMENT_NEWRELIC -Djava.security.egd=file:/dev/./urandom -jar /app.jar --spring.config.location=classpath:/$PROPERTIES_SPRING
+CMD java -Xmx$JVM_MEMORY -Djava.security.egd=file:/dev/./urandom -jar /app.jar --spring.config.location=classpath:/$PROPERTIES_SPRING
 

@@ -1,10 +1,10 @@
+#### SCRIPT CLOUD DEPLOY (PRD) ####
+
 #!/bin/bash
-PROJECT_NAME="dev-api-cep"
-APP_NAME="rest-test"
+PROJECT_NAME="prd-api-cep"
+APP_NAME="customer-test"
 
 mvn clean && mvn package
-
-docker build -t $PROJECT_NAME/$APP_NAME .
 
 alreadyExists=$(docker ps --filter "name=$APP_NAME" -a -q)
 if [[ ! -z "$alreadyExists" ]]

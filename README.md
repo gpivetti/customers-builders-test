@@ -122,6 +122,19 @@ $ mvn clean
 
 OBS: Este serviço foi desenvolvido em um ambiente Linux Ubuntu, e estes problemas podem ocorrer
 
+# Deploy
+
+A aplicação está rodando em um container docker na AWS. Segue o endereço abaixo (alterar o endereço do host:port no postman para o seguinte):
+
+http://prd-api-cep-alb-379706683.us-east-1.elb.amazonaws.com:8295 <br>
+user: builders<br>
+password: test<br>
+
+- OBS 1: Não liguem para o domínio do ALB, foi o que tinha disponível :)
+- OBS 2: O terraform utilizado foi para o deploy na AWS. Podem desconsiderá-lo também.
+
+
+
 # Sobre o Autor
 - Gabriel Pivetti
 - **Email**: gapivetti@gmail.com
