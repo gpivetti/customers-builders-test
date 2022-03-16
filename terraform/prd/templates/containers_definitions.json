@@ -1,0 +1,36 @@
+[
+    {
+      "cpu": 1024,
+      "image": "584991916600.dkr.ecr.us-east-1.amazonaws.com/${APP_PROJECT_NAME}/${APP_NAME}:${APP_VERSION}",
+      "memory": 1024,
+      "name": "${APP_NAME}-cnt",
+      "networkMode": "awsvpc",
+      "portMappings": [
+        {
+          "containerPort": 8295,
+          "hostPort": 8295,
+          "protocol":"tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "PROPERTIES_SPRING",
+          "value": "application-app.yml"
+        },{
+           "name": "JVM_MEMORY",
+           "value": "1000M"
+        },{
+           "name": "ENVIRONMENT_NEWRELIC",
+           "value": "production"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${LOG_GROUP_NAME}",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+]

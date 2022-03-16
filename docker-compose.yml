@@ -1,0 +1,77 @@
+version: '3.3'
+
+services:
+  test-db:
+    image: mongo:latest
+    container_name: gp-builders-mongodb-test
+    restart: always
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    environment:
+      TZ: America/Sao_Paulo
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123
+      MONGO_INITDB_DATABASE: builders-test
+    networks:
+      netBackEnd:
+        ipv4_address: 192.168.0.2
+
+  db:
+    image: mongo:latest
+    container_name: gp-builders-mongodb
+    restart: always
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    environment:
+      TZ: America/Sao_Paulo
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123
+      MONGO_INITDB_DATABASE: builders
+    networks:
+      netBackEnd:
+        ipv4_address: 192.168.0.3
+
+  maven:
+    container_name: gp-builders-maven
+    build: './docker/maven'
+    volumes:
+      - ./:/home/app
+    working_dir: /home/app
+
+  cache:
+    image: redis:alpine
+    container_name: gp-builders-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
+
+  app:
+    image: builders-customer-service
+    container_name: gp-builders-app
+    build:
+      context: .
+      dockerfile: 'docker/app/Dockerfile'
+    network_mode: 'host'
+    volumes:
+      - .:/home/app
+    working_dir: /home/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "db"
+      - "cache"
+
+networks:
+  netBackEnd:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
