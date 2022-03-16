@@ -36,7 +36,7 @@ As seguintes rotas estão implementadas:
 ### Requisitos
 
 O único requisito para a execução da aplicação será o **Docker** e o **Docker Compose** para a geração dos containers.
-<p>***Java11 e Maven***: Requisito para realizão dos testes localmente (testes integrados possuem um banco específico que será inicializado via docker-compose)</p>
+- **Java11 e Maven**: Requisito para realização dos testes localmente (testes integrados possuem um banco específico que será inicializado via docker-compose)</p>
 
 ### Documentação
 
