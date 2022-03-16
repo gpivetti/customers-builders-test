@@ -35,6 +35,7 @@ public class CustomSpringSecurityAdapter extends WebSecurityConfigurerAdapter {
                 .cors()
                 .disable()
                 .authorizeRequests()
+                .antMatchers("/").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

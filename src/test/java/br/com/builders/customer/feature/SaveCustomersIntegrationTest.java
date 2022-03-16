@@ -1,7 +1,7 @@
 package br.com.builders.customer.feature;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertCustomerDto;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.feature.setup.CustomerMockHelper;
 import br.com.builders.customer.feature.setup.TestCustomerSetup;
@@ -66,7 +66,7 @@ public class SaveCustomersIntegrationTest {
     @Test
     @DisplayName("Should throw error when required field is null")
     public void shouldThrowErrorWhenRequiredFieldIsNull() {
-        InsertUpdateCustomerDto customerForInsert = CustomerMockHelper.getCustomerForInsert();
+        InsertCustomerDto customerForInsert = CustomerMockHelper.getCustomerForInsert();
         customerForInsert.setName(null);
 
         ResponseEntity<ApiResponseErrorDTO> response = customerSetup.handleCustomersRequest(

@@ -124,15 +124,25 @@ OBS: Este serviço foi desenvolvido em um ambiente Linux Ubuntu, e estes problem
 
 # Deploy
 
-A aplicação está rodando em um container docker na AWS. Segue o endereço abaixo (alterar o endereço do host:port no postman para o seguinte):
+A aplicação está rodando em um container docker na AWS. Seguem os endereços abaixo para comunicação:
 
-http://prd-api-cep-alb-379706683.us-east-1.elb.amazonaws.com:8295 <br>
-user: builders<br>
-password: test<br>
+- Endpoint Final: http://prd-api-cep-alb-379706683.us-east-1.elb.amazonaws.com:8295
+- API Gateway: https://i3m77g1wsg.execute-api.us-east-1.amazonaws.com
+- Swagger: http://prd-api-cep-alb-379706683.us-east-1.elb.amazonaws.com:8295/swagger.html
 
-- OBS 1: Não liguem para o domínio do ALB, foi o que tinha disponível :)
-- OBS 2: O terraform utilizado foi para o deploy na AWS. Podem desconsiderá-lo também.
+Recomenda-se a utilização do API Gateway ao endpoint final do ALB.
 
+#### Autenticação
+
+- **user**: builders<br>
+- **password**: test<br>
+
+#### Observaçções
+
+- OBS 1: Os 2 endereços estão apontando para o mesmo local, tanto faz a utlização.
+- OBS 2: Não liguem para o domínio do endpoint final, foi o que tinha disponível :) Por isso, utilizem as rotas com o Api Gateway.
+- OBS 3: O terraform utilizado, e que está no repositório, foi criado para o deploy na AWS. Podem desconsiderá-lo.
+- OBS 4: Favor alterar o endereço do [host]:[port] no postman caso forem utilizar o serviço na AWS acima.
 
 
 # Sobre o Autor

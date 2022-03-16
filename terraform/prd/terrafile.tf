@@ -5,7 +5,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "prd-marisa-tfstate"
-    key = "prd-api-cep/customer-test/terraform.state"
+    key = "prd-api-cep/customer-builders-test/terraform.state"
     region = "us-east-1"
   }
 }
@@ -20,7 +20,7 @@ resource "aws_ecr_repository" "terraform_ecr" {
 }
 
 module "app-deploy" {
-  source                 = "git::http://user-WI7DDWmYR_6XMjLvaUKVkw:JChh6RNqMzh8nHBKSCdP@bitbucket.org/lojas-marisa/tf-module-ecs-rest.git?ref=v0.6.1"
+  source                 = "git::http://<USER>:<PASS>@bitbucket.org/lojas-marisa/tf-module-ecs-rest.git?ref=v0.6.1"
   containers_definitions = data.template_file.containers_definitions_json.rendered
   ecs_cluster_id         = data.terraform_remote_state.ecs_cluster.outputs.ecs_cluster_id
   app_project_name       = var.APP_PROJECT_NAME

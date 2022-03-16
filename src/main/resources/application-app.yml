@@ -20,9 +20,8 @@ spring:
       uri: mongodb://marisaroot:72e4ee9de0e81a2bedfc28e3ab3ee770@api-cep-mongo-cluster.cluster-c4gxzmhu24at.us-east-1.docdb.amazonaws.com:27017/bdtest?readPreference=primary&ssl=false&retryWrites=false
   redis:
     password:
-    host: localhost
+    host: prd-cache.rnxyjx.ng.0001.use1.cache.amazonaws.com
     port: 6379
-
 
 app:
   api-user: builders

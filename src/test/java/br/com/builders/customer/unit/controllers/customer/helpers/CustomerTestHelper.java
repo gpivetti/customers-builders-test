@@ -1,7 +1,7 @@
 package br.com.builders.customer.unit.controllers.customer.helpers;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertCustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
 import org.springframework.http.HttpHeaders;
@@ -38,8 +38,8 @@ public class CustomerTestHelper {
         return CustomerDTO.fromCustomer(customerDTO);
     }
 
-    public static InsertUpdateCustomerDto getCustomerToSave(Customer customer) {
-        return InsertUpdateCustomerDto.builder()
+    public static InsertCustomerDto getCustomerToSave(Customer customer) {
+        return InsertCustomerDto.builder()
                 .name(customer.getName())
                 .document(customer.getDocument())
                 .birthdate(customer.getBirthdate())

@@ -1,7 +1,7 @@
 package br.com.builders.customer.unit.controllers.customer;
 
 import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
-import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
+import br.com.builders.customer.controllers.customer.dto.InsertCustomerDto;
 import br.com.builders.customer.unit.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.customer.Customer;
@@ -81,7 +81,7 @@ public class PostCustomerControllerTests {
     @Test
     @DisplayName("On Post Customer: Should return error when name of post payload is null")
     public void shouldReturnErrorWhenNameOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
+        InsertCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setName(null);
 
         var response = this.mapCustomersResponse(
@@ -97,7 +97,7 @@ public class PostCustomerControllerTests {
     @Test
     @DisplayName("On Post Customer: Should return error when document of post payload is null")
     public void shouldReturnErrorWhenDocumentOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
+        InsertCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setDocument(null);
 
         var response = this.mapCustomersResponse(
@@ -113,7 +113,7 @@ public class PostCustomerControllerTests {
     @Test
     @DisplayName("On Post Customer: Should return error when birthdate of post payload is null")
     public void shouldReturnErrorWhenBirthdateOfPostPayloadIsNull() {
-        InsertUpdateCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
+        InsertCustomerDto body = CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0));
         body.setBirthdate(null);
 
         var response = this.mapCustomersResponse(
