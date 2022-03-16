@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+swagger:
+  app-info:
+    name: Customer Endpoint
+    description: Builder's Test
+    version: 1.0.0
+  contact:
+    name: Gabriel Pivetti
+    email: gapivetti@gmail.com
+
+springdoc:
+  swagger-ui:
+    path: /swagger.html
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://root:123@localhost:27017/builders?readPreference=primary&ssl=false&retryWrites=false&authSource=admin
+  redis:
+    password:
+    host: localhost
+    port: 6379
+
+
+app:
+  api-user: builder
+  api-password: test
