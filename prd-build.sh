@@ -1,4 +1,4 @@
-#### SCRIPT CLOUD DEPLOY (PRD) ####
+#### SCRIPT FOR CLOUD DEPLOY (PRD) ####
 
 #!/bin/bash
 PROJECT_NAME="prd-api-cep"

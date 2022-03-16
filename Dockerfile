@@ -1,4 +1,4 @@
-#### DOCKER FILE FOR CLOUD DEPLOY (PRD) ####
+#### DOCKERFILE FOR CLOUD DEPLOY (PRD) ####
 
 FROM adoptopenjdk/openjdk11:jdk-11.0.8_10-alpine-slim
 
