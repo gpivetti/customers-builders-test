@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
@@ -72,7 +72,7 @@ public class PostCustomerControllerTests {
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
                 CustomerTestHelper.getCustomerToSave(CustomerTestHelper.getCustomers().get(0)),
-                CustomerDto.class);
+                CustomerDTO.class);
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         this.assertCustomerFields(response.getBody(), CustomerTestHelper.getCustomers().get(0));
@@ -87,7 +87,7 @@ public class PostCustomerControllerTests {
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port),
                 body,
-                CustomerDto.class);
+                CustomerDTO.class);
 
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -164,7 +164,7 @@ public class PostCustomerControllerTests {
         verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
-    private void assertCustomerFields(CustomerDto returnedBody, Customer mockedCustomer) {
+    private void assertCustomerFields(CustomerDTO returnedBody, Customer mockedCustomer) {
         assertEquals(returnedBody.getId(), mockedCustomer.getId());
         assertEquals(returnedBody.getName(), mockedCustomer.getName());
         assertEquals(returnedBody.getDocument(), mockedCustomer.getDocument());

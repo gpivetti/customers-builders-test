@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.domain.customer.Customer;
@@ -73,7 +73,7 @@ public class PutCustomerControllerTests {
         var response = this.mapCustomersResponse(
                 CustomerTestHelper.makeUrl(this.port, customer.getId()),
                 CustomerTestHelper.getCustomerToSave(customer),
-                CustomerDto.class);
+                CustomerDTO.class);
 
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -144,7 +144,7 @@ public class PutCustomerControllerTests {
         verify(this.logService, times(1)).sendLogError(any(String.class), any(String.class));
     }
 
-    private void assertCustomerFields(CustomerDto returnedBody, Customer mockedCustomer) {
+    private void assertCustomerFields(CustomerDTO returnedBody, Customer mockedCustomer) {
         assertEquals(returnedBody.getId(), mockedCustomer.getId());
         assertEquals(returnedBody.getName(), mockedCustomer.getName());
         assertEquals(returnedBody.getDocument(), mockedCustomer.getDocument());

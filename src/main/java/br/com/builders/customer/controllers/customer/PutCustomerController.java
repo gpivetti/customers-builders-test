@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.controllers.customer.mapper.CustomerMapper;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
@@ -39,7 +39,7 @@ public class PutCustomerController {
             Customer customer = this.saveCustomerService.update(customerId,
                     CustomerMapper.toSaveCustomerDto(customerDto));
             this.validateInsertedCustomer(customer);
-            return new ResponseEntity<>(CustomerDto.fromCustomer(customer), HttpStatus.OK);
+            return new ResponseEntity<>(CustomerDTO.fromCustomer(customer), HttpStatus.OK);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
         } catch (AppErrorException ex) {

@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.controllers.customer.mapper.CustomerMapper;
 import br.com.builders.customer.domain.customer.Customer;
@@ -36,7 +36,7 @@ public class PostCustomerController {
         try {
             Customer customer = this.saveCustomerService.insert(CustomerMapper.toSaveCustomerDto(customerDto));
             this.validateInsertedCustomer(customer);
-            return new ResponseEntity<>(CustomerDto.fromCustomer(customer), HttpStatus.OK);
+            return new ResponseEntity<>(CustomerDTO.fromCustomer(customer), HttpStatus.OK);
         } catch (InvalidConstraintException | ObjectValidationException | AppErrorException ex) {
             throw ex;
         } catch (Exception ex) {

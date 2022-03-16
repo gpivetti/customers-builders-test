@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.dto.GenericPaginatedResponseDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
 import br.com.builders.customer.controllers.helper.FiltersHelper;
@@ -8,6 +8,7 @@ import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.Customer;
+import br.com.builders.customer.domain.customer.adapters.CustomerCacheAdapter;
 import br.com.builders.customer.domain.customer.dto.FiltersCustomerDto;
 import br.com.builders.customer.main.docs.FilterProcessorInfo;
 import br.com.builders.customer.main.exceptions.AppErrorException;
@@ -25,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,21 +36,24 @@ import java.util.stream.Collectors;
 @Tag(name = "orders", description = "Endpoints for orders operations")
 public class GetCustomerController {
     private final FindCustomerService findCustomerService;
+    private final CustomerCacheAdapter customerCacheAdapter;
 
     @Autowired
-    public GetCustomerController(final FindCustomerService findCustomerService) {
+    public GetCustomerController(final FindCustomerService findCustomerService,
+                                 final CustomerCacheAdapter customerCacheAdapter) {
         this.findCustomerService = findCustomerService;
+        this.customerCacheAdapter = customerCacheAdapter;
     }
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Getting Customers")
-    public GenericPaginatedResponseDTO<List<CustomerDto>> getCustomers(@ParameterObject Pageable pageable,
-            @Parameter(description = FilterProcessorInfo.DESCRIPTION, example = FilterProcessorInfo.EXAMPLE)
+    public GenericPaginatedResponseDTO<List<CustomerDTO>> getCustomers(@ParameterObject Pageable pageable,
+                                                                       @Parameter(description = FilterProcessorInfo.DESCRIPTION, example = FilterProcessorInfo.EXAMPLE)
                 @RequestParam(required = false) List<String> filter,
-            HttpServletRequest http) {
+                                                                       HttpServletRequest http) {
         try {
             List<Customer> customers = this.findCustomers(filter, pageable);
-            List<CustomerDto> customersDto = this.mappingCustomers(customers);
+            List<CustomerDTO> customersDto = this.mappingCustomers(customers);
             List<String> queryParameters = FiltersHelper.buildQueryParametersFromStringFilter(filter);
             return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), queryParameters, pageable);
         } catch (InvalidParameterException | AppErrorException ex) {
@@ -60,11 +65,14 @@ public class GetCustomerController {
 
     @GetMapping(value = "{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Getting Customer by id")
-    public ResponseEntity<?> getCustomerById(@PathVariable String customerId) {
+    public ResponseEntity<?> getCustomerById(@NotNull @PathVariable String customerId) {
         try {
-            Customer customer = this.findCustomerService.findCustomerById(customerId);
-            this.validateCustomer(customer);
-            return ResponseEntity.ok(CustomerDto.fromCustomer(customer));
+            CustomerDTO customerDTO = this.findCustomerFromCache(customerId);
+            if (customerDTO == null) {
+                customerDTO = this.findCustomerFromService(customerId);
+                this.saveCustomerOnCache(customerDTO);
+            }
+            return new ResponseEntity<>(customerDTO, HttpStatus.OK);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
         } catch (AppErrorException ex) {
@@ -83,10 +91,24 @@ public class GetCustomerController {
                         PageDataDTO.fromPageable(pageable));
     }
 
-    private List<CustomerDto> mappingCustomers(List<Customer> customers) {
+    private CustomerDTO findCustomerFromCache(String customerId) {
+        return this.customerCacheAdapter.findById(customerId);
+    }
+
+    private void saveCustomerOnCache(CustomerDTO customerDTO) {
+        this.customerCacheAdapter.save(customerDTO);
+    }
+
+    private CustomerDTO findCustomerFromService(String customerId) {
+        Customer customer = this.findCustomerService.findCustomerById(customerId);
+        this.validateCustomer(customer);
+        return CustomerDTO.fromCustomer(customer);
+    }
+
+    private List<CustomerDTO> mappingCustomers(List<Customer> customers) {
         return this.checkCustomers(customers)
                 ? customers.stream()
-                .map(CustomerDto::fromCustomer)
+                .map(CustomerDTO::fromCustomer)
                 .collect(Collectors.toList())
                 : new ArrayList<>();
     }

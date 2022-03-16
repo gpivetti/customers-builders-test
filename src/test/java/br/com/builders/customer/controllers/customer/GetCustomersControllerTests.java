@@ -1,6 +1,6 @@
 package br.com.builders.customer.controllers.customer;
 
-import br.com.builders.customer.controllers.customer.dto.CustomerDto;
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.helpers.CustomerTestHelper;
 import br.com.builders.customer.controllers.dto.ApiResponseErrorDTO;
 import br.com.builders.customer.controllers.dto.ApiResponseNotFoundDTO;
@@ -9,6 +9,7 @@ import br.com.builders.customer.commons.dto.FieldsDataDTO;
 import br.com.builders.customer.commons.dto.PageDataDTO;
 import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
+import br.com.builders.customer.domain.customer.adapters.CustomerCacheAdapter;
 import br.com.builders.customer.domain.log.LogService;
 import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,14 +45,17 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@DisplayName("[UT] On Processing GetCustomerController")
-public class GetCustomerControllerTests {
+@DisplayName("[UT] On Processing GetCustomersController")
+public class GetCustomersControllerTests {
 
     @LocalServerPort
     private int port;
 
     @MockBean
     private FindCustomerService findCustomerService;
+
+    @MockBean
+    private CustomerCacheAdapter customerCacheAdapter;
 
     @MockBean
     private LogService logService;
@@ -72,6 +76,7 @@ public class GetCustomerControllerTests {
     public void beforeEach(){
         reset(this.logService);
         reset(this.findCustomerService);
+        reset(this.customerCacheAdapter);
     }
 
     @Test
@@ -81,7 +86,7 @@ public class GetCustomerControllerTests {
                 .thenReturn(CustomerTestHelper.getCustomers());
 
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -98,7 +103,7 @@ public class GetCustomerControllerTests {
                 .thenReturn(List.of(CustomerTestHelper.getCustomers().get(0)));
 
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -113,7 +118,7 @@ public class GetCustomerControllerTests {
                 .thenReturn(new ArrayList<>());
 
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -127,7 +132,7 @@ public class GetCustomerControllerTests {
                 .thenReturn(null);
 
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -142,7 +147,7 @@ public class GetCustomerControllerTests {
 
         String url = CustomerTestHelper.makeUrl(this.port) + "?page=1&size=10";
         var response = this.makingGetRequest(url, GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -162,7 +167,7 @@ public class GetCustomerControllerTests {
         String url = CustomerTestHelper.makeUrl(this.port) +
                 "?page=1&size=10&filter=name:eq:Gabriel&filter=document:ne:123";
         var response = this.makingGetRequest(url, GenericPaginatedResponseDTO.class);
-        List<CustomerDto> customers = this.mapCustomersResponse(response.getBody());
+        List<CustomerDTO> customers = this.mapCustomersResponse(response.getBody());
 
         assertNotNull(customers);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -174,8 +179,9 @@ public class GetCustomerControllerTests {
     }
 
     @Test
-    @DisplayName("On Get Customers: Should throw InternalServerError when errors occurs to find customer")
-    public void shouldThrowInternalServerErrorWhenErrorsOccursToFindCustomer() {
+    @DisplayName("On Get CustomerById: Should throw InternalServerError when errors occurs to find customer on " +
+            "database")
+    public void shouldThrowInternalServerErrorWhenErrorsOccursToFindCustomerOnDatabase() {
         when(this.findCustomerService.findCustomers(any(PageDataDTO.class))).thenThrow(RuntimeException.class);
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port), ApiResponseErrorDTO.class);
         assertNotNull(response.getBody());
@@ -184,13 +190,15 @@ public class GetCustomerControllerTests {
     }
 
     @Test
-    @DisplayName("On Get CustomerById: Should return customer when the customer exists")
-    public void shouldReturnCustomersWhenTheCustomerExists() {
+    @DisplayName("On Get CustomerById: Should return customer when the customer exists on cache")
+    public void shouldReturnCustomersWhenTheCustomerExistsOnCache() {
         Customer mockedCustomer = CustomerTestHelper.getCustomers().get(0);
 
-        when(this.findCustomerService.findCustomerById(any(String.class))).thenReturn(mockedCustomer);
+        when(this.customerCacheAdapter.findById(any(String.class)))
+                .thenReturn(CustomerTestHelper.mapCustomerDTO(mockedCustomer));
+
         var response = this.makingGetRequest(
-                CustomerTestHelper.makeUrl(this.port, mockedCustomer.getId()), CustomerDto.class);
+                CustomerTestHelper.makeUrl(this.port, mockedCustomer.getId()), CustomerDTO.class);
 
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
@@ -198,26 +206,50 @@ public class GetCustomerControllerTests {
     }
 
     @Test
-    @DisplayName("On Get CustomerById: Should return NotFound when customer not exists")
-    public void shouldReturnNotFoundWhenTheCustomerNotExists() {
+    @DisplayName("On Get CustomerById: Should return customer when the customer not exists on cache " +
+            "but exists on database")
+    public void shouldReturnCustomersWhenTheCustomerExistsOnCacheButExistsOnDatabase() {
+        Customer mockedCustomer = CustomerTestHelper.getCustomers().get(0);
+
+        when(this.customerCacheAdapter.findById(any(String.class))).thenReturn(null);
+        when(this.findCustomerService.findCustomerById(any(String.class))).thenReturn(mockedCustomer);
+
+        var response = this.makingGetRequest(
+                CustomerTestHelper.makeUrl(this.port, mockedCustomer.getId()), CustomerDTO.class);
+
+        assertNotNull(response.getBody());
+        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        this.assertCustomerFields(response.getBody(), mockedCustomer);
+        verify(this.customerCacheAdapter, times(1)).save(response.getBody());
+    }
+
+    @Test
+    @DisplayName("On Get CustomerById: Should return NotFound when customer not exists on service")
+    public void shouldReturnNotFoundWhenTheCustomerNotExistsOnService() {
+        when(this.customerCacheAdapter.findById(any(String.class))).thenReturn(null);
         when(this.findCustomerService.findCustomerById(any(String.class))).thenThrow(ResourceNotFoundException.class);
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port, "any_id"),
                 ApiResponseNotFoundDTO.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     @Test
-    @DisplayName("On Get CustomerById: Should return NotFound when customer returned is null")
-    public void shouldReturnNotFoundWhenTheCustomerReturnedIsNull() {
+    @DisplayName("On Get CustomerById: Should return NotFound when customer returned is null on cache and database")
+    public void shouldReturnNotFoundWhenTheCustomerReturnedIsNullOnCacheAndDatabase() {
+        when(this.customerCacheAdapter.findById(any(String.class))).thenReturn(null);
         when(this.findCustomerService.findCustomerById(any(String.class))).thenReturn(null);
+
         var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port, "any_id"),
                 ApiResponseNotFoundDTO.class);
+
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
-    private void assertCustomerFields(CustomerDto returnedBody, Customer mockedCustomer) {
+    private void assertCustomerFields(CustomerDTO returnedBody, Customer mockedCustomer) {
         assertEquals(returnedBody.getId(), mockedCustomer.getId());
         assertEquals(returnedBody.getName(), mockedCustomer.getName());
         assertEquals(returnedBody.getDocument(), mockedCustomer.getDocument());
@@ -229,9 +261,9 @@ public class GetCustomerControllerTests {
         return this.restTemplate.withBasicAuth(this.user, this.password).exchange(url, HttpMethod.GET, request, clazz);
     }
 
-    public List<CustomerDto> mapCustomersResponse(GenericPaginatedResponseDTO responseBody) {
+    public List<CustomerDTO> mapCustomersResponse(GenericPaginatedResponseDTO responseBody) {
         if (responseBody == null) return null;
-        Type listType = new TypeToken<List<CustomerDto>>(){}.getType();
+        Type listType = new TypeToken<List<CustomerDTO>>(){}.getType();
         return this.modelMapper.map(responseBody.getPayload(), listType);
     }
 }

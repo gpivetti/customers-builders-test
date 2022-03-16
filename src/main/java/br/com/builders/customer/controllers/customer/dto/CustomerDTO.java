@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CustomerDto {
+public class CustomerDTO {
     @Schema(description = "Customer's id")
     private String id;
     @Schema(description = "Customer's name")
@@ -29,8 +29,8 @@ public class CustomerDto {
     @Schema(description = "Customer's age normalized in years, month and days", example = "10y2m5d")
     private String ageNormalized;
 
-    public static CustomerDto fromCustomer(Customer customer) {
-        return CustomerDto.builder()
+    public static CustomerDTO fromCustomer(Customer customer) {
+        return CustomerDTO.builder()
                 .id(customer.getId())
                 .name(customer.getName())
                 .document(customer.getDocument())

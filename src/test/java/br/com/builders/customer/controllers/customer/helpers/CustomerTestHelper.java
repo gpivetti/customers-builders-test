@@ -1,5 +1,6 @@
 package br.com.builders.customer.controllers.customer.helpers;
 
+import br.com.builders.customer.controllers.customer.dto.CustomerDTO;
 import br.com.builders.customer.controllers.customer.dto.InsertUpdateCustomerDto;
 import br.com.builders.customer.domain.customer.Customer;
 
@@ -28,9 +29,13 @@ public class CustomerTestHelper {
                     .id("3")
                     .name("Customer3")
                     .document("100300")
-                    .birthdate(LocalDate.now())
+                    .birthdate(LocalDate.parse("1988-11-06"))
                     .build()
         );
+    }
+
+    public static CustomerDTO mapCustomerDTO(Customer customerDTO) {
+        return CustomerDTO.fromCustomer(customerDTO);
     }
 
     public static InsertUpdateCustomerDto getCustomerToSave(Customer customer) {
