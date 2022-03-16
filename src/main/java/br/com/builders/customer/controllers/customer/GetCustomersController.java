@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("v1/customers")
 @Tag(name = "orders", description = "Endpoints for orders operations")
-public class GetCustomerController {
+public class GetCustomersController {
     private final FindCustomerService findCustomerService;
     private final CustomerCacheAdapter customerCacheAdapter;
 
     @Autowired
-    public GetCustomerController(final FindCustomerService findCustomerService,
-                                 final CustomerCacheAdapter customerCacheAdapter) {
+    public GetCustomersController(final FindCustomerService findCustomerService,
+                                  final CustomerCacheAdapter customerCacheAdapter) {
         this.findCustomerService = findCustomerService;
         this.customerCacheAdapter = customerCacheAdapter;
     }
