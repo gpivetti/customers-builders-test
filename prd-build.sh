@@ -2,7 +2,7 @@
 
 #!/bin/bash
 PROJECT_NAME="prd-api-cep"
-APP_NAME="customer-test"
+APP_NAME="customer-builders-test"
 
 mvn clean && mvn package
 

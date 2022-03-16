@@ -7,11 +7,11 @@ variable "APP_PROJECT_NAME" {
 }
 
 variable "APP_NAME" {
-  default = "customer-test"
+  default = "customer-builders-test"
 }
 
 variable "TGN_NAME" {
-  default = "prd-api-cep-customer-test"
+  default = "prd-api-cep-customer-builders-test"
 }
 
 variable "VPC_TAG_NAME" {
@@ -19,7 +19,7 @@ variable "VPC_TAG_NAME" {
 }
 
 variable "ECR_NAME"{
-  default = "prd-api-cep/customer-test"
+  default = "prd-api-cep/customer-builders-test"
 }
 
 variable "aws_region" {

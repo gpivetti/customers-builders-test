@@ -5,7 +5,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "prd-marisa-tfstate"
-    key = "prd-api-cep/customer-test/terraform.state"
+    key = "prd-api-cep/customer-builders-test/terraform.state"
     region = "us-east-1"
   }
 }
