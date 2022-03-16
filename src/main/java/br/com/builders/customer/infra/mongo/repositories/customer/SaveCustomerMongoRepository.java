@@ -7,6 +7,7 @@ import br.com.builders.customer.infra.mongo.helper.MongoUpdateProcessorHelper;
 import br.com.builders.customer.main.exceptions.AppErrorException;
 import br.com.builders.customer.main.exceptions.InvalidParameterException;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -46,6 +47,7 @@ public class SaveCustomerMongoRepository implements SaveCustomerRepository {
     private CustomerEntity insertCustomer(CustomerEntity customerEntity) {
         customerEntity.setCreatedAt(LocalDateTime.now());
         customerEntity.setUpdatedAt(LocalDateTime.now());
+        customerEntity.setId(new ObjectId());
         return this.mongoTemplate.save(customerEntity);
     }
 
