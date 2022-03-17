@@ -25,7 +25,7 @@ As seguintes rotas estão implementadas:
 
 5. Na atualização do cliente (PUT Customer) é possível atualizar todos os dados do customer ou somente alguns.
 
-6O campo "age" retornando pelas buscas de Clientes é calculado em tempos de execução. Sendo assim, o mesmo não será salvo no banco e nem utilizado como filter/sort nesta primeira versão. 
+6. O campo "age" retornando pelas buscas de Clientes é calculado em tempos de execução. Sendo assim, o mesmo não será salvo no banco e nem utilizado como filter/sort nesta primeira versão. 
 
 ### Implementação:
 - **Tecnologia:** Java 11
@@ -80,8 +80,8 @@ Implementamos os seguintes serviços dentro do arquivo docker-compose, que serã
 - **maven**: Container contendo o maven. Assim, não será necessário ter o maven instalado na máquina para o build da aplicação.
 - **app**: Container principal da aplicação. (Após realizado o build pelo maven, subir este container)
 
-<p>OBS 1: Nunca utilizar o docker-compose up, pois os serviços são indepentendes. Ao invés, utilizar **docker-container run {service}**</p>
-<p>OBS 2: Caso queira, poderá refazer o serviços através de: **docker-compose build {service}**</p>
+<p>OBS 1: Nunca utilizar o docker-compose up, pois os serviços são indepentendes. Ao invés, utilizar docker-container run {service}</p>
+<p>OBS 2: Caso queira, poderá refazer o serviços através de: docker-compose build {service}</p>
 
 ## Rodando a aplicação
 

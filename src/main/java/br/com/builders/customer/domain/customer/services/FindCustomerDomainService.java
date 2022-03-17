@@ -11,9 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class FindCustomerDomainService implements FindCustomerService {
@@ -38,9 +36,8 @@ public class FindCustomerDomainService implements FindCustomerService {
 
     @Override
     public Customer findCustomerById(String customerId) throws ResourceNotFoundException {
-        Customer customer = this.customerRepository.findById(customerId);
-        this.validateCustomerReturned(customerId, customer);
-        return customer;
+        this.validateCustomerId(customerId);
+        return this.customerRepository.findById(customerId);
     }
 
     private <T> List<Customer> findAllCustomers(FieldsDataDTO<T> fields, PageDataDTO pages) {
@@ -49,20 +46,15 @@ public class FindCustomerDomainService implements FindCustomerService {
                 : this.customerRepository.findAll(fields, pages);
     }
 
-    private void validateCustomerReturned(String customerId, Customer customer) {
-        if (customer == null) {
-            throw new ResourceNotFoundException(Customer.class.getName(),
-                    this.normalizeNotFoundCustomerExceptionFilters(customerId));
-        }
-    }
-
-    private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {
-        return new HashMap<>(){{ put("customerId", customerId); }};
-    }
-
     private void validatePageParameters(PageDataDTO pages) {
         if (pages == null) {
             throw new AppErrorException("Invalid filter customers without page parameters");
+        }
+    }
+
+    private void validateCustomerId(String customerId) {
+        if (customerId == null) {
+            throw new AppErrorException("Invalid customerId for find customer");
         }
     }
 

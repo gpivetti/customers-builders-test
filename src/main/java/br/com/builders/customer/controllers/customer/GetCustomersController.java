@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,8 +55,7 @@ public class GetCustomersController {
             @RequestParam(required = false) List<String> filter,
             HttpServletRequest http) {
         try {
-            List<Customer> customers = this.findCustomers(filter, pageable);
-            List<CustomerDTO> customersDto = this.mappingCustomers(customers);
+            List<CustomerDTO> customersDto = this.mappingCustomers(this.findCustomers(filter, pageable));
             List<String> queryParameters = FiltersHelper.buildQueryParametersFromStringFilter(filter);
             return new GenericPaginatedResponseDTO<>(customersDto, http.getRequestURI(), queryParameters, pageable);
         } catch (InvalidParameterException | AppErrorException ex) {
@@ -68,12 +69,9 @@ public class GetCustomersController {
     @Operation(summary = "Getting Customer by id")
     public ResponseEntity<?> getCustomerById(@NotNull @PathVariable String customerId) {
         try {
-            CustomerDTO customerDTO = this.findCustomerFromCache(customerId);
-            if (customerDTO == null) {
-                customerDTO = this.findCustomerFromService(customerId);
-                this.saveCustomerOnCache(customerDTO);
-            }
-            return new ResponseEntity<>(customerDTO, HttpStatus.OK);
+            CustomerDTO customerDTO = this.findCustomer(customerId);
+            this.validateCustomer(customerId, customerDTO);
+            return new ResponseEntity<>(this.findCustomer(customerId), HttpStatus.OK);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
         } catch (AppErrorException ex) {
@@ -92,25 +90,32 @@ public class GetCustomersController {
                         PageDataDTO.fromPageable(pageable));
     }
 
+    private CustomerDTO findCustomer(String customerId) {
+        CustomerDTO customerDTO = this.findCustomerFromCache(customerId);
+        if (customerDTO != null) return customerDTO;
+        customerDTO = this.findCustomerFromService(customerId);
+        if (customerDTO != null) this.saveCustomerOnCache(customerDTO);
+        return customerDTO;
+    }
+
     private CustomerDTO findCustomerFromCache(String customerId) {
         return this.customerCacheAdapter.findById(customerId);
+    }
+
+    private CustomerDTO findCustomerFromService(String customerId) {
+        Customer customer = this.findCustomerService.findCustomerById(customerId);
+        return customer != null
+                ? CustomerDTO.fromCustomer(customer)
+                : null;
     }
 
     private void saveCustomerOnCache(CustomerDTO customerDTO) {
         this.customerCacheAdapter.save(customerDTO);
     }
 
-    private CustomerDTO findCustomerFromService(String customerId) {
-        Customer customer = this.findCustomerService.findCustomerById(customerId);
-        this.validateCustomer(customer);
-        return CustomerDTO.fromCustomer(customer);
-    }
-
     private List<CustomerDTO> mappingCustomers(List<Customer> customers) {
         return this.checkCustomers(customers)
-                ? customers.stream()
-                .map(CustomerDTO::fromCustomer)
-                .collect(Collectors.toList())
+                ? customers.stream().map(CustomerDTO::fromCustomer).collect(Collectors.toList())
                 : new ArrayList<>();
     }
 
@@ -118,8 +123,12 @@ public class GetCustomersController {
         return customers != null && !customers.isEmpty();
     }
 
-    private void validateCustomer(Customer customer) throws ResourceNotFoundException {
+    private void validateCustomer(String customerId, CustomerDTO customer) throws ResourceNotFoundException {
         if (customer == null)
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Customer", this.normalizeNotFoundCustomerExceptionFilters(customerId));
+    }
+
+    private Map<String, String> normalizeNotFoundCustomerExceptionFilters(String customerId) {
+        return new HashMap<>(){{ put("customerId", customerId); }};
     }
 }

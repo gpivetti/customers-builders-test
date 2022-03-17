@@ -11,7 +11,6 @@ import br.com.builders.customer.domain.customer.Customer;
 import br.com.builders.customer.domain.customer.FindCustomerService;
 import br.com.builders.customer.domain.customer.adapters.CustomerCacheAdapter;
 import br.com.builders.customer.domain.log.LogService;
-import br.com.builders.customer.main.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -221,20 +220,6 @@ public class GetCustomersControllerTests {
         assertNotNull(response.getBody());
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         this.assertCustomerFields(response.getBody(), mockedCustomer);
-        verify(this.customerCacheAdapter, times(1)).save(response.getBody());
-    }
-
-    @Test
-    @DisplayName("On Get CustomerById: Should return NotFound when customer not exists on service")
-    public void shouldReturnNotFoundWhenTheCustomerNotExistsOnService() {
-        when(this.customerCacheAdapter.findById(any(String.class))).thenReturn(null);
-        when(this.findCustomerService.findCustomerById(any(String.class))).thenThrow(ResourceNotFoundException.class);
-
-        var response = this.makingGetRequest(CustomerTestHelper.makeUrl(this.port, "any_id"),
-                ApiResponseNotFoundDTO.class);
-
-        assertNotNull(response.getBody());
-        assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
 
     @Test
