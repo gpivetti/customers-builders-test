@@ -111,6 +111,37 @@ public class FindCustomerDomainServiceTests {
         assertThrows(AppErrorException.class, () -> service.findCustomers(new PageDataDTO(0, 20)));
     }
 
+    @Test
+    @DisplayName("On Find Customer by Id: Should throw error when customerId is null")
+    public void shouldReturnThrowErrorWhenCustomerIdIsNull() {
+        FindCustomerService service = this.mockService(this.customerRepository);
+        assertThrows(AppErrorException.class, () -> service.findCustomerById(null));
+    }
+
+    @Test
+    @DisplayName("On Find Customer by Id: Should throw error when occurs errors on find customer by Id")
+    public void shouldReturnThrowErrorWhenOccursErrorsOnFindCustomerById() {
+        when(this.customerRepository.findById(any(String.class))).thenThrow(AppErrorException.class);
+        FindCustomerService service = this.mockService(this.customerRepository);
+        assertThrows(AppErrorException.class, () -> service.findCustomerById("any_id"));
+    }
+
+    @Test
+    @DisplayName("On Find Customer by Id: Should return customer on success")
+    public void shouldReturnCustomerOnSuccess() {
+        when(this.customerRepository.findById(any(String.class)))
+                .thenReturn(CustomerServiceTestHelper.getCustomers().get(0));
+
+        FindCustomerService service = this.mockService(this.customerRepository);
+        Customer customer = service.findCustomerById(CustomerServiceTestHelper.getCustomers().get(0).getId());
+
+        assertNotNull(customer);
+        assertEquals(customer.getId(), CustomerServiceTestHelper.getCustomers().get(0).getId());
+        assertEquals(customer.getName(), CustomerServiceTestHelper.getCustomers().get(0).getName());
+        assertEquals(customer.getDocument(), CustomerServiceTestHelper.getCustomers().get(0).getDocument());
+        assertEquals(customer.getBirthdate(), CustomerServiceTestHelper.getCustomers().get(0).getBirthdate());
+    }
+
     private FindCustomerService mockService(FindCustomerRepository customerRepository) {
         return new FindCustomerDomainService(customerRepository);
     }

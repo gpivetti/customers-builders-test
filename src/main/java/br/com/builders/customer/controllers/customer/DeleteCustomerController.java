@@ -26,7 +26,7 @@ public class DeleteCustomerController {
     @Operation(summary = "Removing Customer by Id")
     public ResponseEntity<?> deleteCustomers(@PathVariable String customerId) {
         try {
-            this.deleteCustomerService.deleteCustomer(customerId);
+            this.deleteCustomer(customerId);
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         } catch (ResourceNotFoundException ex) {
             return new ResponseEntity<>(ApiResponseNotFoundDTO.of("Customer"), HttpStatus.NOT_FOUND);
@@ -37,7 +37,7 @@ public class DeleteCustomerController {
         }
     }
 
-    private void insertCustomer(String customerId) {
+    private void deleteCustomer(String customerId) {
         this.deleteCustomerService.deleteCustomer(customerId);
     }
 }
